@@ -32,9 +32,15 @@ protected:
 		UCameraComponent* Camera;
 
 
+
+	float _targetForwardAxisValue;
+
 public:
 	// Sets default values for this pawn's properties
 	ATankPawn();
+
+	UFUNCTION()
+		void MoveForward(float AxisValue);
 
 protected:
 	// Called when the game starts or when spawned

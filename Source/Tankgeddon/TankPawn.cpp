@@ -6,6 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
+
+class ATankPawn;
 // Sets default values
 ATankPawn::ATankPawn()
 {
@@ -41,7 +43,10 @@ void ATankPawn::BeginPlay()
 void ATankPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	FVector currentLocation = GetActorLocation();
+	FVector forwardVector = GetActorForwardVector();
+	FVector movePosition = currentLocation + forwardVector * MoveSpeed * _targetForwardAxisValue * DeltaTime;
+	SetActorLocation(movePosition, true);
 }
 
 // Called to bind functionality to input
@@ -51,3 +56,7 @@ void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void ATankPawn::MoveForward(float AxisValue)
+{
+	_targetForwardAxisValue = AxisValue;
+}
