@@ -8,6 +8,7 @@
 
 
 class ATankPawn;
+
 // Sets default values
 ATankPawn::ATankPawn()
 {
@@ -49,12 +50,7 @@ void ATankPawn::Tick(float DeltaTime)
 	SetActorLocation(movePosition, true);
 }
 
-// Called to bind functionality to input
-void ATankPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
 
 void ATankPawn::MoveForward(float AxisValue)
 {

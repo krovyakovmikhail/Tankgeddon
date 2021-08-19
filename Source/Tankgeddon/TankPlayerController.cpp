@@ -2,7 +2,10 @@
 
 
 #include "TankPlayerController.h"
+#include "TankPawn.h"
+
 class ATankPawn;
+
 ATankPlayerController::ATankPlayerController()
 {
 }
