@@ -1,10 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include <cmath>
 #include "TankPawn.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "TankPlayerController.h"
 
 
 class ATankPawn;
@@ -40,6 +41,7 @@ void ATankPawn::BeginPlay()
 	
 }
 
+
 // Called every frame
 void ATankPawn::Tick(float DeltaTime)
 {
@@ -53,6 +55,18 @@ void ATankPawn::Tick(float DeltaTime)
 	FVector RightVector = GetActorRightVector();
 	FVector movePositionR = currentLocationR + RightVector * MoveSpeed * _targetRightAxisValue * DeltaTime;
 	SetActorLocation(movePositionR, true);
+
+
+	CurrentRightAxisValue = FMath::Lerp(CurrentRightAxisValue, TargetRotateAxisValue, InterpolationKey);
+	float yawRotation = RotationSpeed * CurrentRightAxisValue * DeltaTime;
+	FRotator currentRotation = GetActorRotation();
+
+	yawRotation = currentRotation.Yaw + yawRotation;
+
+	FRotator newRotation = FRotator(0, yawRotation, 0);
+	SetActorRotation(newRotation);
+
+
 }
 
 
@@ -64,4 +78,8 @@ void ATankPawn::MoveForward(float AxisValue)
 void ATankPawn::MoveRight(float AxisValue)
 {
 	_targetRightAxisValue = AxisValue;
+}
+void ATankPawn::RotateRight(float AxisValue)
+{
+	TargetRotateAxisValue = AxisValue;
 }

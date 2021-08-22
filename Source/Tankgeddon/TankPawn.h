@@ -20,21 +20,23 @@ protected:
 		UStaticMeshComponent* BodyMesh;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* TurretMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
-		float MoveSpeed = 100;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
-		float RotationSpeed = 100;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UCameraComponent* Camera;
 
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
+		float MoveSpeed = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
+		float RotationSpeed = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
+		float InterpolationKey = 0.1f;
 
 	float _targetForwardAxisValue;
 	float _targetRightAxisValue;
+	float TargetRotateAxisValue;
+	float CurrentRightAxisValue;
+
 
 public:
 	// Sets default values for this pawn's properties
@@ -45,6 +47,10 @@ public:
 
 	UFUNCTION()
 		void MoveRight(float AxisValue);
+
+	UFUNCTION()
+		void RotateRight(float AxisValue);
+
 
 protected:
 	// Called when the game starts or when spawned
