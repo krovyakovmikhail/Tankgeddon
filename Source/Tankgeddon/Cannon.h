@@ -34,12 +34,11 @@ protected:
 		float FireDamage = 1;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
-		ECannonType Type = ECannonType::FireProjectile;
+		ECannonType Type = ECannonType::FireAuto;
 
 	FTimerHandle ReloadTimerHandle;
 
 	bool ReadyToFire = false;
-
 
 	//Количество снарядов по-умолчанию пока поставим в пушку 10. Потом посмотрит как будет. И отдельно количество SpecialShells
 	int NumberOfShells = 10;

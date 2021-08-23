@@ -45,38 +45,64 @@ void ACannon::Tick(float DeltaTime)
 }
 
 void ACannon::Fire()
-{
+{	
 	if (!ReadyToFire)
-	{
-		return;
+	{		
+		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
+		return;		
 	}
 	ReadyToFire = false;
 
+
+
 	if (Type == ECannonType::FireProjectile)
 	{
-	if (NumberOfShells > 0)
-
+		if (NumberOfShells > 0) 
 		{
-			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - projectile");
+			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - projectile");			
 			NumberOfShells--; //производим выстрел и -1 сна€рд.
 		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
+		}
 		
-		else //нет снар€дов
-		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
 	}
-	else //
+	else if (Type == ECannonType::FireTrace) //Use projectile
 	{
 		if (NumberOfShells > 0)
 		{
 			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - trace");
-			NumberOfShells--; //производим выстрел и -1 сна€рд.
+			NumberOfShells--; //производим выстрел и -1 сна€рд.		
 		}
-		
-		else //нет снар€дов
+		else
+		{
 			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
+		}
+	
+	}
+	else //Use autofire //Ќажимаем Ћ ћ 1 раз: по€вл€етс€ снар€д, задержка, по€вл€етс€ снар€д...
+	{
+		if (NumberOfShells > 0)
+		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
+			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
+			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
+
+			NumberOfShells--; //производим выстрел и -1 сна€рд.
+
+			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
+		}
+
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+	
 
 }
 
@@ -108,7 +134,12 @@ bool ACannon::IsReadyToFire()
 	return ReadyToFire;
 }
 
-void ACannon::Reload()
+void ACannon::Reload()  
 {
-	ReadyToFire = true;
+
+		ReadyToFire = true;
+	
+	
+		
+	
 }
