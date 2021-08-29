@@ -53,7 +53,7 @@ void ATankPawn::BeginPlay()
 	TankController = Cast<ATankPlayerController>(GetController());
 
 	//Начало игры - загружаем пушку. 
-	SetupCannon();
+	SetupCannon(CannonClass);
 	
 }
 
@@ -106,7 +106,7 @@ void ATankPawn::RotateRight(float AxisValue)
 
 
 //Cannon
-void ATankPawn::SetupCannon()
+void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
 {
 	if (Cannon)
 	{
@@ -116,8 +116,10 @@ void ATankPawn::SetupCannon()
 	FActorSpawnParameters params;
 	params.Instigator = this;
 	params.Owner = this;
-	Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, params);
+	Cannon = GetWorld()->SpawnActor<ACannon>(inClassCannon, params);
 	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+
+
 }
 
 void ATankPawn::Fire()
