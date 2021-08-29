@@ -23,14 +23,17 @@ void ATankPlayerController::SetupInputComponent()
 
 void ATankPlayerController::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 	FVector mouseDirection;
 	DeprojectMousePositionToWorld(MousePos, mouseDirection);
 	FVector pawnPos = TankPawn->GetActorLocation();
 	MousePos.Z = pawnPos.Z;
 	FVector dir = MousePos - pawnPos;
 	dir.Normalize();
-	MousePos = pawnPos + dir * 1000;
+	MousePos = pawnPos + dir * 1000.f;
 	DrawDebugLine(GetWorld(), pawnPos, MousePos, FColor::Green, false, 0.1f, 0, 5);
+	
 }
 
 void ATankPlayerController::BeginPlay()

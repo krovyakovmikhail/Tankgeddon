@@ -7,7 +7,10 @@
 #include "GameFramework/Actor.h"
 #include "Cannon.generated.h"
 
+
+
 class UArrowComponent;
+class AProjectile;
 
 
 UCLASS()
@@ -34,7 +37,11 @@ protected:
 		float FireDamage = 1;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
-		ECannonType Type = ECannonType::FireAuto;
+		ECannonType Type = ECannonType::FireProjectile;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+		TSubclassOf<AProjectile> ProjectileClass;
+
 
 	FTimerHandle ReloadTimerHandle;
 
@@ -44,24 +51,14 @@ protected:
 	int NumberOfShells = 10;
 
 	int NumberOfSpecialShells = 10;
-
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-
 	//Reload
 	void Reload();
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-
 	void Fire();
-
 	bool IsReadyToFire();
-
-
 	// FireSpecial()
 	void FireSpecial();
+	virtual void BeginPlay() override;
 };
+

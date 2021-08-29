@@ -6,7 +6,11 @@
 #include "Components/StaticMeshComponent.h"
 #include "TimerManager.h"
 #include "Engine/Engine.h"
+#include "Projectile.h"
+#include "DrawDebugHelpers.h"
 
+
+class AProjectile;
 
 // Sets default values
 ACannon::ACannon()
@@ -28,25 +32,12 @@ ACannon::ACannon()
 }
 
 // Called when the game starts or when spawned
-void ACannon::BeginPlay()
-{
 
-	Super::BeginPlay();
-	Reload();
-}
-
-// Called every frame
-void ACannon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	//Выведем в сообщение кол-во снарядов.
-	//GEngine->AddOnScreenDebugMessage(10, 1, FColor::Yellow, NumberOfShells);
-}
 
 void ACannon::Fire()
 {	
-	if (!ReadyToFire)
+
+	if (!ReadyToFire || NumberOfShells <= 0) // Идем в если когда неперезаряжен или количество снарядов 0
 	{		
 		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
 		return;		
@@ -57,49 +48,48 @@ void ACannon::Fire()
 
 	if (Type == ECannonType::FireProjectile)
 	{
-		if (NumberOfShells > 0) 
-		{
-			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - projectile");			
-			NumberOfShells--; //производим выстрел и -1 снаярд.
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
-		}
-		
+			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - projectile");
+			AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+			if (projectile)
+			{
+				projectile->Start(); // выпускаем снаряд 
+			}
+			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false); 
+			NumberOfShells--; // -1 снаярд.
+
 	}
-	else if (Type == ECannonType::FireTrace) //Use projectile
+	else if (Type == ECannonType::FireTrace) //Use Trace
 	{
-		if (NumberOfShells > 0)
+		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - trace");
+		FHitResult hitResult;
+		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+		traceParams.bTraceComplex = true;
+		traceParams.bReturnPhysicalMaterial = false;
+
+		FVector start = ProjectileSpawnPoint->GetComponentLocation();
+		FVector end = ProjectileSpawnPoint->GetForwardVector() * FireRange + start;
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility, traceParams))
 		{
-			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - trace");
-			NumberOfShells--; //производим выстрел и -1 снаярд.		
+			DrawDebugLine(GetWorld(), start, hitResult.Location, FColor::Red, false, 0.3f, 0,3);
+			if (hitResult.Actor.Get())
+			{
+				hitResult.Actor.Get()->Destroy();
+			}
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
+			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 0.3f, 0,3);
 		}
-	
+
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+		NumberOfShells--; // -1 снаярд.		
 	}
 	else //Use autofire //Нажимаем ЛКМ 1 раз: появляется снаряд, задержка, появляется снаряд...
 	{
-		if (NumberOfShells > 0)
-		{
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
-			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
-			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
-
-			NumberOfShells--; //производим выстрел и -1 снаярд.
-
-			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
-		}
-
+			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false); // Вызывается перезарядка 
+		
+			NumberOfShells--;
 	}
 
 	
@@ -127,19 +117,20 @@ void ACannon::FireSpecial()
 	else //нет снарядов
 		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
 };
-
-
 bool ACannon::IsReadyToFire()
 {
 	return ReadyToFire;
 }
-
 void ACannon::Reload()  
 {
 
 		ReadyToFire = true;
-	
-	
 		
-	
+}
+void ACannon::BeginPlay()
+{
+
+	Super::BeginPlay();
+	Reload();
+
 }
