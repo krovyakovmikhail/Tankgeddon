@@ -48,8 +48,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Cannon")
 		TSubclassOf<ACannon> CannonClass;
 
-	UPROPERTY()
-		ACannon* Cannon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Cannon")
+		TSubclassOf<ACannon> CannonClass2;
+
+	
 
 
 
@@ -62,6 +64,11 @@ public:
 	// Sets default values for this pawn's properties
 	ATankPawn();
 
+	// создаем 2 слота для крепления пушек. 
+	UPROPERTY()
+		ACannon* Cannonslot1;
+	UPROPERTY()
+		ACannon* Cannonslot2;
 	// move and rotation
 	UFUNCTION()
 		void MoveForward(float AxisValue);
@@ -73,6 +80,7 @@ public:
 		void Fire();
 	UFUNCTION()
 		void FireSpecial();
+	
 	
 
 protected:
@@ -88,6 +96,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION()
 	void SetupCannon(TSubclassOf<ACannon> inClassCannon);
+	UFUNCTION()
+		void ChangeCannon();
+
+	
+
+
 
 	
 
