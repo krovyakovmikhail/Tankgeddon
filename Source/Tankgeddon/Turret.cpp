@@ -13,6 +13,10 @@
 // Sets default values
 ATurret::ATurret()
 {
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
+	HealthComponent->OnDie.AddUObject(this, &ATurret::Die);
+	HealthComponent->OnDamaged.AddUObject(this, &ATurret::DamageTaked);
+
 	BodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret body"));
 	RootComponent = BodyMesh;
 
@@ -50,6 +54,7 @@ void ATurret::BeginPlay()
 
 	FTimerHandle _targetingTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(_targetingTimerHandle, this, &ATurret::Targeting, TargetingRate, true, TargetingRate);
+
 	
 }
 
@@ -103,4 +108,18 @@ void ATurret::Fire()
 		Cannon->Fire();
 }
 
+void ATurret::TakeDamage(FDamageData DamageData)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Turret %s taked damage:%f "), *GetName(), DamageData.DamageValue);
+}
+
+void ATurret::Die()
+{
+	Destroy();
+}
+
+void ATurret::DamageTaked(float DamageValue)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Turret %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+}
 

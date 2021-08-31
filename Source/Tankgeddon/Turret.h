@@ -9,6 +9,8 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "Cannon.h"
+#include "DamageTaker.h"
+#include "HealthComponent.h"
 #include "Turret.generated.h"
 
 
@@ -18,6 +20,8 @@ class TANKGEDDON_API ATurret : public AActor
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* BodyMesh;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -58,5 +62,14 @@ protected:
 	bool CanFire();
 	void Fire();
 
+public:
+	UFUNCTION()
+		void Die();
+
+	UFUNCTION()
+		void DamageTaked(float DamageValue);
+
+	UFUNCTION()
+		void TakeDamage(FDamageData DamageData);
 
 };
