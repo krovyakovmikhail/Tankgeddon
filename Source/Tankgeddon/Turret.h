@@ -15,7 +15,8 @@
 
 
 UCLASS()
-class TANKGEDDON_API ATurret : public AActor
+class TANKGEDDON_API ATurret : public AActor, public IDamageTaker
+
 {
 	GENERATED_BODY()
 
