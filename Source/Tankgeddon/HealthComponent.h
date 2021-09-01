@@ -12,7 +12,8 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TANKGEDDON_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
-		DECLARE_EVENT(UHealthComponent, FOnDie)
+
+	DECLARE_EVENT(UHealthComponent, FOnDie)
 	DECLARE_EVENT_OneParam(UHealthComponent, FOnHealthChanged, float)
 
 protected:

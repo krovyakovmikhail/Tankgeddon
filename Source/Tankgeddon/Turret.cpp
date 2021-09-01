@@ -9,6 +9,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "DamageTaker.h"
 
 // Sets default values
 ATurret::ATurret()
@@ -121,5 +122,6 @@ void ATurret::Die()
 void ATurret::DamageTaked(float DamageValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Turret %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+
 }
 

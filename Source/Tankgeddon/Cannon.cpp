@@ -7,6 +7,9 @@
 #include "TimerManager.h"
 #include "Engine/Engine.h"
 #include "Projectile.h"
+#include "Engine/World.h"
+#include "DamageTaker.h"
+#include "HealthComponent.h"
 #include "DrawDebugHelpers.h"
 
 
@@ -56,6 +59,7 @@ void ACannon::Fire()
 			AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
 			if (projectile)
 			{
+
 				projectile->Start(); // выпускаем снаряд 
 			}
 			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false); 
@@ -63,8 +67,14 @@ void ACannon::Fire()
 
 	}
 	else if (Type == ECannonType::FireTrace) //Use Trace
-	{
+	{	
+		AActor* owner = GetOwner();
+		AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr;
+		AActor* OtherActor = nullptr; //нужно получить цель пересечения луча.
+
 		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - trace");
+		
+
 		FHitResult hitResult;
 		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
 		traceParams.bTraceComplex = true;
@@ -72,12 +82,36 @@ void ACannon::Fire()
 
 		FVector start = ProjectileSpawnPoint->GetComponentLocation();
 		FVector end = ProjectileSpawnPoint->GetForwardVector() * FireRange + start;
+
 		if (GetWorld()->LineTraceSingleByChannel(hitResult, start, end, ECollisionChannel::ECC_Visibility, traceParams))
 		{
 			DrawDebugLine(GetWorld(), start, hitResult.Location, FColor::Red, false, 0.3f, 0,3);
+
+			
+
+			UE_LOG(LogTemp, Warning, TEXT(" %s collided with %s. "), *GetName(), *OtherActor->GetName());
+
 			if (hitResult.Actor.Get())
 			{
-				hitResult.Actor.Get()->Destroy();
+				if (OtherActor != owner && OtherActor != ownerByOwner)
+				{
+					IDamageTaker* damageTakerActor = Cast<IDamageTaker>(OtherActor);
+					if (damageTakerActor)
+					{
+						FDamageData damageData;
+						damageData.DamageValue = FireDamage;
+						damageData.Instigator = owner;
+						damageData.DamageMaker = this;
+
+						damageTakerActor->TakeDamage(damageData);
+					}
+					else
+					{
+						OtherActor->Destroy();
+					}
+
+					Destroy();
+				}
 			}
 		}
 		else
