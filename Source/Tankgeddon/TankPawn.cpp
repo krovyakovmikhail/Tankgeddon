@@ -33,7 +33,6 @@ ATankPawn::ATankPawn()
 
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring arm"));
-
 	SpringArm->SetupAttachment(BodyMesh);
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->bInheritPitch = false;
@@ -42,6 +41,13 @@ ATankPawn::ATankPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
+	HealthComponent->OnDie.AddUObject(this, &ATankPawn::Die);
+	HealthComponent->OnDamaged.AddUObject(this, &ATankPawn::DamageTaked);
+
+	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
+	HitCollider->SetupAttachment(BodyMesh);
 
 }
 
@@ -64,7 +70,6 @@ void ATankPawn::BeginPlay()
 	Cannonslot2->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	
 }
-
 
 // Called every frame
 void ATankPawn::Tick(float DeltaTime)
@@ -100,8 +105,6 @@ void ATankPawn::Tick(float DeltaTime)
 
 }
 
-
-
 void ATankPawn::MoveForward(float AxisValue)
 {
 	_targetForwardAxisValue = AxisValue;
@@ -111,7 +114,6 @@ void ATankPawn::RotateRight(float AxisValue)
 {
 	TargetRotateAxisValue = AxisValue;
 }
-
 
 //Cannon
 void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
@@ -129,8 +131,6 @@ void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
 
 
 }
-
-
 
 void ATankPawn::ChangeCannon()  //замена пушки
 {
@@ -157,4 +157,20 @@ void ATankPawn::FireSpecial()
 		Cannonslot1->FireSpecial();
 	}
 }
+
+void ATankPawn::TakeDamage(FDamageData DamageData)
+{
+	HealthComponent->TakeDamage(DamageData);
+}
+
+void ATankPawn::Die()
+{
+	Destroy();
+}
+
+void ATankPawn::DamageTaked(float DamageValue)
+{
+	UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+}
+
 

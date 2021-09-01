@@ -4,6 +4,9 @@
 
 #include "Cannon.h"
 #include "CoreMinimal.h"
+#include "DamageTaker.h"
+#include "HealthComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "TankPawn.generated.h"
 
@@ -15,7 +18,8 @@ class ATankPlayerController;
 class ACannon;
 
 UCLASS()
-class TANKGEDDON_API ATankPawn : public APawn
+class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
+
 {
 	GENERATED_BODY()
 
@@ -28,6 +32,11 @@ protected:
 		USpringArmComponent* SpringArm;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UCameraComponent* Camera;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UHealthComponent* HealthComponent;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UBoxComponent* HitCollider;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
 		float MoveSpeed = 100;
@@ -80,6 +89,16 @@ public:
 		void Fire();
 	UFUNCTION()
 		void FireSpecial();
+
+	UFUNCTION()
+		void TakeDamage(FDamageData DamageData);
+	UFUNCTION()
+
+		void SetupCannon(TSubclassOf<ACannon> inClassCannon);
+	UFUNCTION()
+		void ChangeCannon();
+
+	virtual void Tick(float DeltaTime) override;
 	
 	
 
@@ -87,22 +106,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	//Setup cannon
-
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 	UFUNCTION()
-	void SetupCannon(TSubclassOf<ACannon> inClassCannon);
+		void Die();
+
 	UFUNCTION()
-		void ChangeCannon();
+		void DamageTaked(float DamageValue);
 
-	
-
-
-
-	
 
 };
