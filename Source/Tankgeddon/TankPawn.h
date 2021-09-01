@@ -24,6 +24,11 @@ class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
+		TArray<FVector> PatrollingPoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Accurency")
+		float MovementAccurency = 50;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* BodyMesh;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -44,6 +49,7 @@ protected:
 		float RotationSpeed = 100;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
 		float InterpolationKey = 0.1f;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Speed")
 		float TurretRotationInterpolationKey = 0.5f;
 
@@ -87,16 +93,31 @@ public:
 	//FIRE
 	UFUNCTION()
 		void Fire();
+
 	UFUNCTION()
 		void FireSpecial();
 
 	UFUNCTION()
 		void TakeDamage(FDamageData DamageData);
-	UFUNCTION()
 
+	UFUNCTION()
 		void SetupCannon(TSubclassOf<ACannon> inClassCannon);
+
 	UFUNCTION()
 		void ChangeCannon();
+
+	UFUNCTION()
+		TArray<FVector> GetPatrollingPoints() { return PatrollingPoints; };
+
+	UFUNCTION()
+		float GetMovementAccurency() { return MovementAccurency; };
+
+	UFUNCTION()
+		FVector GetTurretForwardVector();
+
+	UFUNCTION()
+		void RotateTurretTo(FVector TargetPosition);
+
 
 	virtual void Tick(float DeltaTime) override;
 	

@@ -10,6 +10,8 @@
 
 class ATankPawn;
 class ACannon;
+class TankAIController;
+
 
 DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
 DEFINE_LOG_CATEGORY(TankLog);
@@ -74,8 +76,10 @@ void ATankPawn::BeginPlay()
 // Called every frame
 void ATankPawn::Tick(float DeltaTime)
 {
-	//движение танка вперед назадд
+	
 	Super::Tick(DeltaTime);
+
+	// Tank movement
 	FVector currentLocation = GetActorLocation();
 	FVector forwardVector = GetActorForwardVector();
 	FVector movePosition = currentLocation + forwardVector * MoveSpeed * _targetForwardAxisValue * DeltaTime;
@@ -101,7 +105,18 @@ void ATankPawn::Tick(float DeltaTime)
 		targetRotation.Pitch = currRotation.Pitch;
 		targetRotation.Roll = currRotation.Roll;
 		TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
+	};
+
+	// поворот туррели танка на игрока
+	void ATankPawn::RotateTurretTo(FVector TargetPosition)
+	{
+		FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
+		FRotator currRotation = TurretMesh->GetComponentRotation();
+		targetRotation.Pitch = currRotation.Pitch;
+		targetRotation.Roll = currRotation.Roll;
+		TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
 	}
+
 
 }
 
@@ -172,5 +187,11 @@ void ATankPawn::DamageTaked(float DamageValue)
 {
 	UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
 }
+
+FVector ATankPawn::GetTurretForwardVector()
+{
+	return TurretMesh->GetForwardVector();
+}
+
 
 
