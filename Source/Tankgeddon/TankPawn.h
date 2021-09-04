@@ -23,11 +23,14 @@ class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
 {
 	GENERATED_BODY()
 
+
 protected:
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
 		TArray<FVector> PatrollingPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Accurency")
 		float MovementAccurency = 50;
+
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* BodyMesh;
@@ -79,11 +82,14 @@ public:
 	// Sets default values for this pawn's properties
 	ATankPawn();
 
+	FVector GetEyesPosition();
+
 	// создаем 2 слота для крепления пушек. 
 	UPROPERTY()
 		ACannon* Cannonslot1;
 	UPROPERTY()
 		ACannon* Cannonslot2;
+
 	// move and rotation
 	UFUNCTION()
 		void MoveForward(float AxisValue);
@@ -107,10 +113,16 @@ public:
 		void ChangeCannon();
 
 	UFUNCTION()
-		TArray<FVector> GetPatrollingPoints() { return PatrollingPoints; };
+		const TArray<FVector>& GetPatrollingPoints()
+	{ 
+		return PatrollingPoints; 
+	};
 
 	UFUNCTION()
-		float GetMovementAccurency() { return MovementAccurency; };
+		float GetMovementAccurency() 
+	{ 
+		return MovementAccurency; 
+	};
 
 	UFUNCTION()
 		FVector GetTurretForwardVector();

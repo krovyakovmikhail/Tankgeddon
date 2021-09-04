@@ -51,8 +51,7 @@ void ACannon::Fire()
 	}
 	ReadyToFire = false;
 
-
-
+	// FIRE
 	if (Type == ECannonType::FireProjectile)
 	{
 			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - projectile");

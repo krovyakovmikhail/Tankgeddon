@@ -40,6 +40,7 @@ protected:
 	UPROPERTY()
 		APawn* PlayerPawn;
 
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
 		float TargetingRange = 1000;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
@@ -64,6 +65,7 @@ protected:
 	bool IsPlayerInRange();
 	bool CanFire();
 	void Fire();
+	bool IsPlayerSeen();
 
 public:
 	UFUNCTION()

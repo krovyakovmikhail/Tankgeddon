@@ -9,24 +9,34 @@
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
-
 	TankPawn = Cast<ATankPawn>(GetPawn());
-	FVector pawnLocation = TankPawn->GetActorLocation();
+	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn(); 
 	MovementAccurency = TankPawn->GetMovementAccurency();
+
+	FVector pawnLocation = TankPawn->GetActorLocation();		
 	TArray<FVector> points = TankPawn->GetPatrollingPoints();
+	
+
 	for (FVector point : points)
 	{
 		PatrollingPoints.Add(point + pawnLocation);
 	}
-	CurrentPatrolPointIndex = 0;
+	CurrentPatrolPointIndex = PatrollingPoints.Num() == 0 ? INDEX_NONE : 0;
 }
 
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	TankPawn->MoveForward(1);
 
-	float rotationValue = GetRotationgValue();
+	if (CurrentPatrolPointIndex == INDEX_NONE)
+	{
+		TankPawn->MoveForward(0.f);
+		return;
+
+	}
+	TankPawn->MoveForward(1.f);
+	
+	float rotationValue = GetRotationgValue();	
 	TankPawn->RotateRight(rotationValue);
 
 	Targeting();
@@ -83,10 +93,13 @@ bool ATankAIController::IsPlayerInRange()
 
 bool ATankAIController::CanFire()
 {
+	if (!IsPlayerSeen())
+		return false;
+
 	FVector targetingDir = TankPawn->GetTurretForwardVector();
 	FVector dirToPlayer = PlayerPawn->GetActorLocation() - TankPawn->GetActorLocation();
 	dirToPlayer.Normalize();
-	float aimAngle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(targetingDir, dirToPlayer)));
+	float aimAngle = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(targetingDir, dirToPlayer)));
 	return aimAngle <= Accurency;
 }
 
@@ -94,3 +107,30 @@ void ATankAIController::Fire()
 {
 	TankPawn->Fire();
 }
+
+bool ATankAIController::IsPlayerSeen()
+{
+	
+		FVector playerPos = PlayerPawn->GetActorLocation();
+		FVector eyesPos = TankPawn->GetEyesPosition();
+
+		FHitResult hitResult;
+		FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+		traceParams.bTraceComplex = true;
+		traceParams.AddIgnoredActor(TankPawn);
+		traceParams.bReturnPhysicalMaterial = false;
+
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, eyesPos, playerPos, ECollisionChannel::ECC_Visibility, traceParams))
+		{
+
+			if (hitResult.Actor.Get())
+			{
+				DrawDebugLine(GetWorld(), eyesPos, hitResult.Location, FColor::Cyan, false, 0.5f, 0, 10);
+				return hitResult.Actor.Get() == PlayerPawn;
+			}
+		}
+		DrawDebugLine(GetWorld(), eyesPos, playerPos, FColor::Cyan, false, 0.5f, 0, 10);
+		return false;
+	
+}
+
