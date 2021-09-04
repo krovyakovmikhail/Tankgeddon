@@ -11,6 +11,8 @@
 #include "Components/BoxComponent.h"
 #include "DrawDebugHelpers.h"
 #include "DamageTaker.h"
+#include <Particles/ParticleSystemComponent.h>
+#include <Components/AudioComponent.h>
 
 // Sets default values
 ATurret::ATurret()
@@ -30,6 +32,15 @@ ATurret::ATurret()
 
 	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
 	HitCollider->SetupAttachment(TurretMesh);
+
+	DestroyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Destroy Effect"));
+	DestroyEffect->SetupAttachment(BodyMesh);
+
+	DamageEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Damage Effect"));
+	DamageEffect->SetupAttachment(BodyMesh);
+
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
+	AudioEffect->SetupAttachment(BodyMesh);
 
 	UStaticMesh* turretMeshTemp = LoadObject<UStaticMesh>(this, *TurretMeshPath);
 	if (turretMeshTemp)
@@ -121,6 +132,8 @@ void ATurret::TakeDamage(FDamageData DamageData)
 void ATurret::Die()
 {
 	Destroy();
+	DestroyEffect->ActivateSystem();
+	AudioEffect->Play();
 }
 
 void ATurret::DamageTaked(float DamageValue)

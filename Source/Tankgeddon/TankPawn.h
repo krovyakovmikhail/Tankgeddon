@@ -8,9 +8,12 @@
 #include "HealthComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 #include "TankPawn.generated.h"
 
-
+class UParticleSystemComponent;
+class UAudioComponent;
 class UStaticMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -44,6 +47,12 @@ protected:
 		UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UBoxComponent* HitCollider;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DestroyEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DamageEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UAudioComponent* AudioEffect;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
