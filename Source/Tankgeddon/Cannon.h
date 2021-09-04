@@ -42,23 +42,38 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 		TSubclassOf<AProjectile> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+		int32 NumberOfShells = 10;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+		int32 NumberOfSpecialShells = 10;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+		int32 autofirelenth = 2;
+
 
 	FTimerHandle ReloadTimerHandle;
+	FTimerHandle AutiFiretimer;
+
 
 	bool ReadyToFire = false;
 
 	//Количество снарядов по-умолчанию пока поставим в пушку 10. Потом посмотрит как будет. И отдельно количество SpecialShells
-	int NumberOfShells = 10;
+	
+	
+	 // используется для SpecialFire();
+	
 
-	int NumberOfSpecialShells = 10;
-	//Reload
-	void Reload();
+	void Reload();	
+	
 
 public:	
+	
 	void Fire();
 	bool IsReadyToFire();
 	// FireSpecial()
 	void FireSpecial();
 	virtual void BeginPlay() override;
+	void AddShells (int32 &shells);
 };
 

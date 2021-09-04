@@ -33,6 +33,10 @@ ACannon::ACannon()
 
 // Called when the game starts or when spawned
 
+void ACannon::AddShells(int32 &shells)
+{
+	NumberOfShells = NumberOfShells + shells;
+};
 
 void ACannon::Fire()
 {	
@@ -82,20 +86,37 @@ void ACannon::Fire()
 		}
 
 		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+
 		NumberOfShells--; // -1 снаярд.		
 	}
 	else //Use autofire //Нажимаем ЛКМ 1 раз: появляется снаряд, задержка, появляется снаряд...
 	{
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2, FColor::Purple, "Use autofire", true);
+			AProjectile* projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+			if (projectile)
+			{
+				projectile->Start(); // выпускаем снаряд 
+			}
+		
+			if (autofirelenth > 0) 
+			{
+				autofirelenth--;
+				ReadyToFire = true;
+				GetWorld()->GetTimerManager().SetTimer(AutiFiretimer, this, &ACannon::Fire, 0.2, false); 
+				
+				
+			}
+		
+
 			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false); // Вызывается перезарядка 
 		
-			NumberOfShells--;
+			NumberOfShells--; 
+			
 	}
 
 	
 
 }
-
 //FireSpecial
 void ACannon::FireSpecial()
 {
@@ -106,13 +127,22 @@ void ACannon::FireSpecial()
 	ReadyToFire = false;
 
 
-
-	if (NumberOfSpecialShells > 0)
+	
+	if (NumberOfSpecialShells > 0 && autofirelenth > 0)
 	{
 	GEngine->AddOnScreenDebugMessage(10, 1, FColor::Red, "FireSpecial");
+
+	
+
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false);
+	
+	autofirelenth--;
+	FireSpecial(); // пока autofirelenth не дойдет до 0 будет повторно вызывася медод спишлфайр 			
 
     NumberOfSpecialShells --;
+	
+	autofirelenth = 3;
+
 	}
 	else //нет снарядов
 		GEngine->AddOnScreenDebugMessage(10, 1, FColor::Blue, "no shells!");
@@ -125,6 +155,7 @@ void ACannon::Reload()
 {
 
 		ReadyToFire = true;
+		autofirelenth = 2;
 		
 }
 void ACannon::BeginPlay()
@@ -134,3 +165,4 @@ void ACannon::BeginPlay()
 	Reload();
 
 }
+

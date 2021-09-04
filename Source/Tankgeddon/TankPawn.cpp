@@ -54,6 +54,14 @@ void ATankPawn::BeginPlay()
 
 	//Начало игры - загружаем пушку. 
 	SetupCannon(CannonClass);
+
+
+	//Начало игры - загружаем пушку во второй слот. 	
+	FActorSpawnParameters params;
+	params.Instigator = this;
+	params.Owner = this;
+	Cannonslot2 = GetWorld()->SpawnActor<ACannon>(CannonClass2, params);
+	Cannonslot2->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	
 }
 
@@ -108,32 +116,45 @@ void ATankPawn::RotateRight(float AxisValue)
 //Cannon
 void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
 {
-	if (Cannon)
+	if (Cannonslot1) //сбрасывать пушку и крепить из подобранного бокса будем на 1-й слот (второй сохраняется всегда.)
 	{
-		Cannon->Destroy();
+		Cannonslot1->Destroy();
 	}
 
 	FActorSpawnParameters params;
 	params.Instigator = this;
 	params.Owner = this;
-	Cannon = GetWorld()->SpawnActor<ACannon>(inClassCannon, params);
-	Cannon->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	Cannonslot1 = GetWorld()->SpawnActor<ACannon>(inClassCannon, params);
+	Cannonslot1->AttachToComponent(CannonSetupPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 
 }
 
+
+
+void ATankPawn::ChangeCannon()  //замена пушки
+{
+	ACannon* Cannon; //Время жизни объекта Cannon будет ограничено функцие CancgeCannon/ 
+
+	Cannon = Cannonslot1;
+
+	Cannonslot1 = Cannonslot2;
+	Cannonslot2 = Cannon;	
+}
+
 void ATankPawn::Fire()
 {
-	if (Cannon)
+	if (Cannonslot1)
 	{
-		Cannon->Fire();
+		Cannonslot1->Fire();
 	}
 }
 
 void ATankPawn::FireSpecial()
 {
-	if (Cannon)
+	if (Cannonslot1)
 	{
-		Cannon->FireSpecial();
+		Cannonslot1->FireSpecial();
 	}
 }
+
