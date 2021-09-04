@@ -13,6 +13,7 @@
 class ATankPawn;
 class ACannon;
 class TankAIController;
+class ATargetPoint;
 
 
 DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
@@ -73,6 +74,21 @@ FVector ATankPawn::GetTurretForwardVector()
 FVector ATankPawn::GetEyesPosition()
 {
 	return CannonSetupPoint->GetComponentLocation();
+}
+TArray<FVector> ATankPawn::GetPatrollingPoints()
+{
+	TArray<FVector> points;
+	for (ATargetPoint* point : PatrollingPoints)
+	{
+		points.Add(point->GetActorLocation());
+	}
+
+	return points;
+}
+
+void ATankPawn::SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints)
+{
+	PatrollingPoints = NewPatrollingPoints;
 }
 
 // Called when the game starts or when spawned

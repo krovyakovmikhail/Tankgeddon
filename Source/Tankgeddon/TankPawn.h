@@ -10,6 +10,7 @@
 #include "GameFramework/Pawn.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
+#include "Engine/TargetPoint.h"
 #include "TankPawn.generated.h"
 
 class UParticleSystemComponent;
@@ -30,7 +31,7 @@ class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
 protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
-		TArray<FVector> PatrollingPoints;
+		TArray<ATargetPoint*> PatrollingPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Accurency")
 		float MovementAccurency = 50;
 
@@ -90,6 +91,9 @@ protected:
 public:
 	// Sets default values for this pawn's properties
 	ATankPawn();
+
+	TArray<FVector> GetPatrollingPoints();
+	void SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints);
 
 	FVector GetEyesPosition();
 
