@@ -9,15 +9,20 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "Cannon.h"
+#include "DamageTaker.h"
+#include "HealthComponent.h"
 #include "Turret.generated.h"
 
 
 UCLASS()
-class TANKGEDDON_API ATurret : public AActor
+class TANKGEDDON_API ATurret : public AActor, public IDamageTaker
+
 {
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* BodyMesh;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -43,6 +48,8 @@ protected:
 		float TargetingRate = 0.005f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
 		float Accurency = 10;
+
+
 	const FString BodyMeshPath = "StaticMesh'/Game/CSC/Meshes/SM_CSC_Tower1.SM_CSC_Tower1'";
 	const FString TurretMeshPath = "StaticMesh'/Game/CSC/Meshes/SM_CSC_Gun1.SM_CSC_Gun1'";
 
@@ -58,5 +65,14 @@ protected:
 	bool CanFire();
 	void Fire();
 
+public:
+	UFUNCTION()
+		void Die();
+
+	UFUNCTION()
+		void DamageTaked(float DamageValue);
+
+	UFUNCTION()
+		void TakeDamage(FDamageData DamageData);
 
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameStructs.h"
 #include "GameFramework/Actor.h"
+#include "DamageTaker.h"
 #include "Cannon.generated.h"
 
 
@@ -50,6 +51,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 		int32 autofirelenth = 2;
+
 
 
 	FTimerHandle ReloadTimerHandle;

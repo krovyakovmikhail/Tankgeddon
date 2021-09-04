@@ -10,6 +10,8 @@
 
 class ATankPawn;
 class ACannon;
+class TankAIController;
+
 
 DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
 DEFINE_LOG_CATEGORY(TankLog);
@@ -33,7 +35,6 @@ ATankPawn::ATankPawn()
 
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring arm"));
-
 	SpringArm->SetupAttachment(BodyMesh);
 	SpringArm->bDoCollisionTest = false;
 	SpringArm->bInheritPitch = false;
@@ -42,6 +43,13 @@ ATankPawn::ATankPawn()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health component"));
+	HealthComponent->OnDie.AddUObject(this, &ATankPawn::Die);
+	HealthComponent->OnDamaged.AddUObject(this, &ATankPawn::DamageTaked);
+
+	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
+	HitCollider->SetupAttachment(BodyMesh);
 
 }
 
@@ -65,12 +73,13 @@ void ATankPawn::BeginPlay()
 	
 }
 
-
 // Called every frame
 void ATankPawn::Tick(float DeltaTime)
 {
-	//движение танка вперед назадд
+	
 	Super::Tick(DeltaTime);
+
+	// Tank movement
 	FVector currentLocation = GetActorLocation();
 	FVector forwardVector = GetActorForwardVector();
 	FVector movePosition = currentLocation + forwardVector * MoveSpeed * _targetForwardAxisValue * DeltaTime;
@@ -79,7 +88,7 @@ void ATankPawn::Tick(float DeltaTime)
 	//Поворот танка
 	CurrentRightAxisValue = FMath::Lerp(CurrentRightAxisValue, TargetRotateAxisValue, InterpolationKey);
 	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentRightAxisValue = %f TargetRightAxisValue = %f"), CurrentRightAxisValue, TargetRotateAxisValue);
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentRightAxisValue = %f TargetRightAxisValue = %f"), CurrentRightAxisValue, TargetRotateAxisValue);
 
 	float yawRotation = RotationSpeed * CurrentRightAxisValue * DeltaTime;
 	FRotator currentRotation = GetActorRotation();
@@ -96,11 +105,20 @@ void ATankPawn::Tick(float DeltaTime)
 		targetRotation.Pitch = currRotation.Pitch;
 		targetRotation.Roll = currRotation.Roll;
 		TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
+	};
+
+	// поворот туррели танка на игрока
+	void ATankPawn::RotateTurretTo(FVector TargetPosition)
+	{
+		FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
+		FRotator currRotation = TurretMesh->GetComponentRotation();
+		targetRotation.Pitch = currRotation.Pitch;
+		targetRotation.Roll = currRotation.Roll;
+		TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
 	}
 
+
 }
-
-
 
 void ATankPawn::MoveForward(float AxisValue)
 {
@@ -111,7 +129,6 @@ void ATankPawn::RotateRight(float AxisValue)
 {
 	TargetRotateAxisValue = AxisValue;
 }
-
 
 //Cannon
 void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
@@ -129,8 +146,6 @@ void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
 
 
 }
-
-
 
 void ATankPawn::ChangeCannon()  //замена пушки
 {
@@ -157,4 +172,26 @@ void ATankPawn::FireSpecial()
 		Cannonslot1->FireSpecial();
 	}
 }
+
+void ATankPawn::TakeDamage(FDamageData DamageData)
+{
+	HealthComponent->TakeDamage(DamageData);
+}
+
+void ATankPawn::Die()
+{
+	Destroy();
+}
+
+void ATankPawn::DamageTaked(float DamageValue)
+{
+	UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+}
+
+FVector ATankPawn::GetTurretForwardVector()
+{
+	return TurretMesh->GetForwardVector();
+}
+
+
 
