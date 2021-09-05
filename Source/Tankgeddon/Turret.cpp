@@ -13,6 +13,7 @@
 #include "DamageTaker.h"
 #include <Particles/ParticleSystemComponent.h>
 #include <Components/AudioComponent.h>
+#include "MapLoader.h"
 
 // Sets default values
 ATurret::ATurret()
@@ -57,6 +58,9 @@ ATurret::ATurret()
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(false);
+
 
 	FActorSpawnParameters params;
 	params.Owner = this;
@@ -131,9 +135,15 @@ void ATurret::TakeDamage(FDamageData DamageData)
 
 void ATurret::Die()
 {
+
 	Destroy();
 	DestroyEffect->ActivateSystem();
 	AudioEffect->Play();
+
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(true);
+
+
 }
 
 void ATurret::DamageTaked(float DamageValue)

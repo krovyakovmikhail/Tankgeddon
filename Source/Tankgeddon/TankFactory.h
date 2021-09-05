@@ -14,13 +14,17 @@
 
 class UParticleSystemComponent;
 class UAudioComponent;
-
+class AMapLoader;
 
 UCLASS()
 class TANKGEDDON_API ATankFactory : public AActor, public IDamageTaker
 {
 	GENERATED_BODY()
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
+		AMapLoader* LinkedMapLoader;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* BuildingMesh;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
@@ -45,6 +49,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawn tanks params")
 		float SpawnTankRate = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Spawn tanks params")
+		float DeactivateEffect = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
 		TArray<ATargetPoint*> TankWayPoints;

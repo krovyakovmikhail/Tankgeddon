@@ -7,6 +7,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "MapLoader.h"
 
 
 // Sets default values
@@ -51,6 +52,10 @@ void ATankFactory::TakeDamage(FDamageData DamageData)
 void ATankFactory::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(false);
+
 	FTimerHandle _targetingTimerHandle;
 
 	GetWorld()->GetTimerManager().SetTimer(_targetingTimerHandle, this, &ATankFactory::SpawnNewTank, SpawnTankRate, true, SpawnTankRate);
@@ -61,7 +66,7 @@ void ATankFactory::BeginPlay()
 void ATankFactory::SpawnNewTank()
 {
 	
-
+	SpawnTankEffect->ActivateSystem(); // активируем эффект
 	if (SpawnTank) 
 	{
 		FTransform spawnTransform(TankSpawnPoint->GetComponentRotation(), TankSpawnPoint->GetComponentLocation(), FVector(1));
@@ -69,7 +74,7 @@ void ATankFactory::SpawnNewTank()
 
 
 		//эффект создания танка..
-		SpawnTankEffect->ActivateSystem();
+		
 
 
 		newTank->SetPatrollingPoints(TankWayPoints);
@@ -78,6 +83,8 @@ void ATankFactory::SpawnNewTank()
 	}
 	
 
+
+	
 }
 
 void ATankFactory::Die()
@@ -88,9 +95,11 @@ void ATankFactory::Die()
 	//дестроим компонент стрелку спаун поинт. - ?
 	//сделаю булеву через которую можно отключить спаун.
 	SpawnTank = false;
-
 	DestroyEffect->ActivateSystem();
 	AudioEffect->Play();
+
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(true);
 }
 
 void ATankFactory::DamageTaked(float DamageValue)

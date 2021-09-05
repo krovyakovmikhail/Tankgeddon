@@ -18,6 +18,7 @@
 
 class UParticleSystemComponent;
 class UAudioComponent;
+class AMapLoader;
 
 UCLASS()
 class TANKGEDDON_API ATurret : public AActor, public IDamageTaker
@@ -26,6 +27,9 @@ class TANKGEDDON_API ATurret : public AActor, public IDamageTaker
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
+		AMapLoader* LinkedMapLoader;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
