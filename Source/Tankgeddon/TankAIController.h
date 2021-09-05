@@ -25,7 +25,10 @@ protected:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
-	TArray<FVector> PatrollingPoints;
+		TArray<FVector> PatrollingPoints;
+
+	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Accurency")
 		float MovementAccurency;
 
@@ -53,5 +56,6 @@ protected:
 	bool CanFire();
 	void Fire();
 	bool IsPlayerSeen();
+	void Initialize();
 
 };

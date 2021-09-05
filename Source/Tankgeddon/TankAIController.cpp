@@ -9,24 +9,33 @@
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	TankPawn = Cast<ATankPawn>(GetPawn());
-	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn(); 
-	MovementAccurency = TankPawn->GetMovementAccurency();
 
-	FVector pawnLocation = TankPawn->GetActorLocation();		
-	TArray<FVector> points = TankPawn->GetPatrollingPoints();
-	
+	Initialize();
 
-	for (FVector point : points)
-	{
-		PatrollingPoints.Add(point + pawnLocation);
-	}
-	CurrentPatrolPointIndex = PatrollingPoints.Num() == 0 ? INDEX_NONE : 0;
+// 	TankPawn = Cast<ATankPawn>(GetPawn());
+// 	PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn(); 
+// 	MovementAccurency = TankPawn->GetMovementAccurency();
+// 
+// 	FVector pawnLocation = TankPawn->GetActorLocation();		
+// 	TArray<FVector> points = TankPawn->GetPatrollingPoints();
+// 	
+// 
+// 	for (FVector point : points)
+// 	{
+// 		PatrollingPoints.Add(point + pawnLocation);
+// 	}
+// 	CurrentPatrolPointIndex = PatrollingPoints.Num() == 0 ? INDEX_NONE : 0;
 }
 
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (!TankPawn)
+		Initialize();
+
+	if (!TankPawn)
+		return;
 
 	if (CurrentPatrolPointIndex == INDEX_NONE)
 	{
@@ -35,11 +44,12 @@ void ATankAIController::Tick(float DeltaTime)
 
 	}
 	TankPawn->MoveForward(1.f);
-	
-	float rotationValue = GetRotationgValue();	
+
+	float rotationValue = GetRotationgValue();
 	TankPawn->RotateRight(rotationValue);
 
 	Targeting();
+
 }
 
 float ATankAIController::GetRotationgValue()
@@ -110,7 +120,9 @@ void ATankAIController::Fire()
 
 bool ATankAIController::IsPlayerSeen()
 {
-	
+	if (!PlayerPawn)
+		Initialize();
+
 		FVector playerPos = PlayerPawn->GetActorLocation();
 		FVector eyesPos = TankPawn->GetEyesPosition();
 
@@ -134,3 +146,19 @@ bool ATankAIController::IsPlayerSeen()
 	
 }
 
+void ATankAIController::Initialize()
+{
+	TankPawn = Cast<ATankPawn>(GetPawn());
+	if (TankPawn)
+	{
+		PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+		FVector pawnLocation = TankPawn->GetActorLocation();
+		MovementAccurency = TankPawn->GetMovementAccurency();
+		TArray<FVector> points = TankPawn->GetPatrollingPoints();
+		for (FVector point : points)
+		{
+			PatrollingPoints.Add(point);
+		}
+		CurrentPatrolPointIndex = 0;
+	}
+}

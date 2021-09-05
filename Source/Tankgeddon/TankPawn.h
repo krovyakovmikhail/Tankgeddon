@@ -92,8 +92,10 @@ public:
 	// Sets default values for this pawn's properties
 	ATankPawn();
 
+	UFUNCTION()
 	TArray<FVector> GetPatrollingPoints();
-	void SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints);
+
+	void SetPatrollingPoints(const TArray<ATargetPoint*>& NewPatrollingPoints);
 
 	FVector GetEyesPosition();
 
@@ -125,11 +127,8 @@ public:
 	UFUNCTION()
 		void ChangeCannon();
 
-	UFUNCTION()
-		const TArray<FVector>& GetPatrollingPoints()
-	{ 
-		return PatrollingPoints; 
-	};
+
+	
 
 	UFUNCTION()
 		float GetMovementAccurency() 
