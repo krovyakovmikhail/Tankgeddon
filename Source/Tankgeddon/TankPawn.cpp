@@ -92,10 +92,7 @@ void ATankPawn::SetPatrollingPoints(const TArray<ATargetPoint*>& NewPatrollingPo
 
 }
 
-// void ATankPawn::SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints)
-// {
-// 	PatrollingPoints = NewPatrollingPoints;
-// }
+
 
 // Called when the game starts or when spawned
 void ATankPawn::BeginPlay()

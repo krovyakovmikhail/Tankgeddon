@@ -6,9 +6,14 @@
 #include "TankPawn.h"
 #include "Engine/TargetPoint.h"
 #include "GameFramework/Actor.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
+
 #include "TankFactory.generated.h"
 
 
+class UParticleSystemComponent;
+class UAudioComponent;
 
 
 UCLASS()
@@ -25,6 +30,15 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UHealthComponent* HealthComponent;
 
+	//++Effect component
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DestroyEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* SpawnTankEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UAudioComponent* AudioEffect;
+	//--Effect component
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
 		TSubclassOf<ATankPawn> SpawnTankClass;
@@ -35,6 +49,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn tanks params")
 		TArray<ATargetPoint*> TankWayPoints;
 
+	//пока данная переменная имеет значение Истина - танки спавнятся, иначе нет.
+	bool SpawnTank = true;
 	
 public:	
 	// Sets default values for this actor's properties
