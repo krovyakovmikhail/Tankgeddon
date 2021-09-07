@@ -11,8 +11,13 @@
 #include "Cannon.h"
 #include "DamageTaker.h"
 #include "HealthComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
 #include "Turret.generated.h"
 
+
+class UParticleSystemComponent;
+class UAudioComponent;
 
 UCLASS()
 class TANKGEDDON_API ATurret : public AActor, public IDamageTaker
@@ -31,6 +36,12 @@ protected:
 		UArrowComponent* CannonSetupPoint;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UBoxComponent* HitCollider;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DestroyEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DamageEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UAudioComponent* AudioEffect;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ammo")
 		TSubclassOf<ACannon> CannonClass;
@@ -39,6 +50,7 @@ protected:
 		ACannon* Cannon;
 	UPROPERTY()
 		APawn* PlayerPawn;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Targeting")
 		float TargetingRange = 1000;
@@ -64,6 +76,7 @@ protected:
 	bool IsPlayerInRange();
 	bool CanFire();
 	void Fire();
+	bool IsPlayerSeen();
 
 public:
 	UFUNCTION()

@@ -11,6 +11,8 @@
 #include "DamageTaker.h"
 #include "HealthComponent.h"
 #include "DrawDebugHelpers.h"
+#include <Particles/ParticleSystemComponent.h>
+#include <Components/AudioComponent.h>
 
 
 class AProjectile;
@@ -31,7 +33,13 @@ ACannon::ACannon()
 	ProjectileSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Spawn point"));
 	ProjectileSpawnPoint->SetupAttachment(Mesh);
 
+	ShootEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shoot Effect"));
+	ShootEffect->SetupAttachment(ProjectileSpawnPoint);
 
+
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
+	AudioEffect->SetupAttachment(ProjectileSpawnPoint);
+	
 }
 
 // Called when the game starts or when spawned
@@ -50,9 +58,11 @@ void ACannon::Fire()
 		return;		
 	}
 	ReadyToFire = false;
+	ShootEffect->ActivateSystem();
+	AudioEffect->Play();
 
 
-
+	// FIRE
 	if (Type == ECannonType::FireProjectile)
 	{
 			GEngine->AddOnScreenDebugMessage(10, 1, FColor::Green, "Fire - projectile");

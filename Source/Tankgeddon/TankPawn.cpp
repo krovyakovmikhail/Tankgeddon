@@ -7,10 +7,13 @@
 #include "TankPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
+#include <Particles/ParticleSystemComponent.h>
+#include <Components/AudioComponent.h>
 
 class ATankPawn;
 class ACannon;
 class TankAIController;
+class ATargetPoint;
 
 
 DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
@@ -29,9 +32,20 @@ ATankPawn::ATankPawn()
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tank turret"));
 	TurretMesh->SetupAttachment(BodyMesh);
 
+	DestroyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Destroy Effect"));
+	DestroyEffect->SetupAttachment(BodyMesh);
+
+	DamageEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Damage Effect"));
+	DamageEffect->SetupAttachment(BodyMesh);
+
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
+	AudioEffect->SetupAttachment(BodyMesh);
+
 	//Cannon
 	CannonSetupPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("Cannon setup point"));
 	CannonSetupPoint->AttachToComponent(TurretMesh, FAttachmentTransformRules::KeepRelativeTransform);
+
+	
 
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring arm"));
@@ -51,6 +65,30 @@ ATankPawn::ATankPawn()
 	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
 	HitCollider->SetupAttachment(BodyMesh);
 
+}
+
+FVector ATankPawn::GetTurretForwardVector()
+{
+	return TurretMesh->GetForwardVector();
+}
+FVector ATankPawn::GetEyesPosition()
+{
+	return CannonSetupPoint->GetComponentLocation();
+}
+TArray<FVector> ATankPawn::GetPatrollingPoints()
+{
+	TArray<FVector> points;
+	for (ATargetPoint* point : PatrollingPoints)
+	{
+		points.Add(point->GetActorLocation());
+	}
+
+	return points;
+}
+
+void ATankPawn::SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints)
+{
+	PatrollingPoints = NewPatrollingPoints;
 }
 
 // Called when the game starts or when spawned
@@ -76,7 +114,7 @@ void ATankPawn::BeginPlay()
 // Called every frame
 void ATankPawn::Tick(float DeltaTime)
 {
-	
+
 	Super::Tick(DeltaTime);
 
 	// Tank movement
@@ -87,7 +125,7 @@ void ATankPawn::Tick(float DeltaTime)
 
 	//Поворот танка
 	CurrentRightAxisValue = FMath::Lerp(CurrentRightAxisValue, TargetRotateAxisValue, InterpolationKey);
-	
+
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentRightAxisValue = %f TargetRightAxisValue = %f"), CurrentRightAxisValue, TargetRotateAxisValue);
 
 	float yawRotation = RotationSpeed * CurrentRightAxisValue * DeltaTime;
@@ -99,25 +137,22 @@ void ATankPawn::Tick(float DeltaTime)
 	// Поворот турелли.
 	if (TankController)
 	{
-		FVector MousePos = TankController->GetMousePos();
-		FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), MousePos);
-		FRotator currRotation = TurretMesh->GetComponentRotation();
-		targetRotation.Pitch = currRotation.Pitch;
-		targetRotation.Roll = currRotation.Roll;
-		TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
-	};
-
-	// поворот туррели танка на игрока
-	void ATankPawn::RotateTurretTo(FVector TargetPosition)
-	{
-		FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
-		FRotator currRotation = TurretMesh->GetComponentRotation();
-		targetRotation.Pitch = currRotation.Pitch;
-		targetRotation.Roll = currRotation.Roll;
-		TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
+		FVector mousePos = TankController->GetMousePos();
+		RotateTurretTo(mousePos);
 	}
 
+};
+	
+	
 
+// поворот туррели танка на игрока
+void ATankPawn::RotateTurretTo(FVector TargetPosition)
+{
+	FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
+	FRotator currRotation = TurretMesh->GetComponentRotation();
+	targetRotation.Pitch = currRotation.Pitch;
+	targetRotation.Roll = currRotation.Roll;
+	TurretMesh->SetWorldRotation(FMath::Lerp(currRotation, targetRotation, TurretRotationInterpolationKey));
 }
 
 void ATankPawn::MoveForward(float AxisValue)
@@ -176,11 +211,15 @@ void ATankPawn::FireSpecial()
 void ATankPawn::TakeDamage(FDamageData DamageData)
 {
 	HealthComponent->TakeDamage(DamageData);
+	DamageEffect->ActivateSystem();
+	AudioEffect->Play();
 }
 
 void ATankPawn::Die()
 {
 	Destroy();
+	DestroyEffect->ActivateSystem();
+	AudioEffect->Play();
 }
 
 void ATankPawn::DamageTaked(float DamageValue)
@@ -188,10 +227,8 @@ void ATankPawn::DamageTaked(float DamageValue)
 	UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
 }
 
-FVector ATankPawn::GetTurretForwardVector()
-{
-	return TurretMesh->GetForwardVector();
-}
+
+
 
 
 

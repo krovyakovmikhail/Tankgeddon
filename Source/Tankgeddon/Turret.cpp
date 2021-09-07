@@ -9,7 +9,10 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "DrawDebugHelpers.h"
 #include "DamageTaker.h"
+#include <Particles/ParticleSystemComponent.h>
+#include <Components/AudioComponent.h>
 
 // Sets default values
 ATurret::ATurret()
@@ -29,6 +32,15 @@ ATurret::ATurret()
 
 	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
 	HitCollider->SetupAttachment(TurretMesh);
+
+	DestroyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Destroy Effect"));
+	DestroyEffect->SetupAttachment(BodyMesh);
+
+	DamageEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Damage Effect"));
+	DamageEffect->SetupAttachment(BodyMesh);
+
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
+	AudioEffect->SetupAttachment(BodyMesh);
 
 	UStaticMesh* turretMeshTemp = LoadObject<UStaticMesh>(this, *TurretMeshPath);
 	if (turretMeshTemp)
@@ -96,6 +108,9 @@ bool ATurret::IsPlayerInRange()
 
 bool ATurret::CanFire()
 {
+	if (!IsPlayerSeen())
+		return false;
+
 	FVector targetingDir = TurretMesh->GetForwardVector();
 	FVector dirToPlayer = PlayerPawn->GetActorLocation() - GetActorLocation();
 	dirToPlayer.Normalize();
@@ -117,11 +132,41 @@ void ATurret::TakeDamage(FDamageData DamageData)
 void ATurret::Die()
 {
 	Destroy();
+	DestroyEffect->ActivateSystem();
+	AudioEffect->Play();
 }
 
 void ATurret::DamageTaked(float DamageValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Turret %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+
+}
+bool ATurret::IsPlayerSeen()
+{
+	
+	
+
+	FVector playerPos = PlayerPawn->GetActorLocation();
+	FVector eyesPos = CannonSetupPoint->GetComponentLocation();
+
+	FHitResult hitResult;
+	FCollisionQueryParams traceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+	traceParams.bTraceComplex = true;
+	//traceParams.AddIgnoredActor(TankPawn);
+	traceParams.bReturnPhysicalMaterial = false;
+
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, eyesPos, playerPos, ECollisionChannel::ECC_Visibility, traceParams))
+	{
+
+		if (hitResult.Actor.Get())
+		{
+			DrawDebugLine(GetWorld(), eyesPos, hitResult.Location, FColor::Cyan, false, 0.5f, 0, 10);
+			return hitResult.Actor.Get() == PlayerPawn;
+		}
+	}
+	DrawDebugLine(GetWorld(), eyesPos, playerPos, FColor::Cyan, false, 0.5f, 0, 10);
+	return false;
+
 
 }
 

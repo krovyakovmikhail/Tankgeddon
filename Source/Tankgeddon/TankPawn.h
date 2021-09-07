@@ -8,9 +8,13 @@
 #include "HealthComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
+#include "Engine/TargetPoint.h"
 #include "TankPawn.generated.h"
 
-
+class UParticleSystemComponent;
+class UAudioComponent;
 class UStaticMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
@@ -23,11 +27,14 @@ class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
 {
 	GENERATED_BODY()
 
+
 protected:
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
-		TArray<FVector> PatrollingPoints;
+		TArray<ATargetPoint*> PatrollingPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Accurency")
 		float MovementAccurency = 50;
+
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UStaticMeshComponent* BodyMesh;
@@ -41,6 +48,12 @@ protected:
 		UHealthComponent* HealthComponent;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 		UBoxComponent* HitCollider;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DestroyEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UParticleSystemComponent* DamageEffect;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+		UAudioComponent* AudioEffect;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
@@ -79,11 +92,17 @@ public:
 	// Sets default values for this pawn's properties
 	ATankPawn();
 
+	TArray<FVector> GetPatrollingPoints();
+	void SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints);
+
+	FVector GetEyesPosition();
+
 	// создаем 2 слота для крепления пушек. 
 	UPROPERTY()
 		ACannon* Cannonslot1;
 	UPROPERTY()
 		ACannon* Cannonslot2;
+
 	// move and rotation
 	UFUNCTION()
 		void MoveForward(float AxisValue);
@@ -107,10 +126,16 @@ public:
 		void ChangeCannon();
 
 	UFUNCTION()
-		TArray<FVector> GetPatrollingPoints() { return PatrollingPoints; };
+		const TArray<FVector>& GetPatrollingPoints()
+	{ 
+		return PatrollingPoints; 
+	};
 
 	UFUNCTION()
-		float GetMovementAccurency() { return MovementAccurency; };
+		float GetMovementAccurency() 
+	{ 
+		return MovementAccurency; 
+	};
 
 	UFUNCTION()
 		FVector GetTurretForwardVector();
