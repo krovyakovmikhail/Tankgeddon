@@ -36,7 +36,6 @@ ACannon::ACannon()
 	ShootEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shoot Effect"));
 	ShootEffect->SetupAttachment(ProjectileSpawnPoint);
 
-
 	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
 	AudioEffect->SetupAttachment(ProjectileSpawnPoint);
 	
@@ -58,6 +57,8 @@ void ACannon::Fire()
 		return;		
 	}
 	ReadyToFire = false;
+	 
+
 	ShootEffect->ActivateSystem();
 	AudioEffect->Play();
 
@@ -74,6 +75,7 @@ void ACannon::Fire()
 			}
 			GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1 / FireRate, false); 
 			NumberOfShells--; // -1 сна€рд.
+		
 
 	}
 	else if (Type == ECannonType::FireTrace) //Use Trace

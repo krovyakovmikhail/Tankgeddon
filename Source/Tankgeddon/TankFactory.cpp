@@ -7,6 +7,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "MapLoader.h"
 
 
 // Sets default values
@@ -31,6 +32,14 @@ ATankFactory::ATankFactory()
 	HealthComponent->OnDie.AddUObject(this, &ATankFactory::Die);
 	HealthComponent->OnDamaged.AddUObject(this, &ATankFactory::DamageTaked);
 
+	DestroyEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Destroy Effect"));
+	DestroyEffect->SetupAttachment(HitCollider);
+	AudioEffect = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Effect"));
+	AudioEffect->SetupAttachment(HitCollider);
+	SpawnTankEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Damage Effect"));
+	SpawnTankEffect->SetupAttachment(HitCollider);
+
+	
 
 }
 
@@ -43,7 +52,12 @@ void ATankFactory::TakeDamage(FDamageData DamageData)
 void ATankFactory::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(false);
+
 	FTimerHandle _targetingTimerHandle;
+
 	GetWorld()->GetTimerManager().SetTimer(_targetingTimerHandle, this, &ATankFactory::SpawnNewTank, SpawnTankRate, true, SpawnTankRate);
 
 	
@@ -51,13 +65,41 @@ void ATankFactory::BeginPlay()
 
 void ATankFactory::SpawnNewTank()
 {
+	
+	SpawnTankEffect->ActivateSystem(); // активируем эффект
+	if (SpawnTank) 
+	{
+		FTransform spawnTransform(TankSpawnPoint->GetComponentRotation(), TankSpawnPoint->GetComponentLocation(), FVector(1));
+		ATankPawn* newTank = GetWorld()->SpawnActorDeferred<ATankPawn>(SpawnTankClass, spawnTransform, this, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
+
+		//эффект создания танка..
+		
+
+
+		newTank->SetPatrollingPoints(TankWayPoints);
+		//
+		UGameplayStatics::FinishSpawningActor(newTank, spawnTransform);
+	}
+	
+
+
+	
 }
 
 void ATankFactory::Die()
 {
-	Destroy();
+	// добавить ссылку на другой меш. заменяем меш на другой
+	//BuildingMesh = StaticMesh'/Game/StarterContent/Architecture/Floor_400x400.Floor_400x400';
+	
+	//дестроим компонент стрелку спаун поинт. - ?
+	//сделаю булеву через которую можно отключить спаун.
+	SpawnTank = false;
+	DestroyEffect->ActivateSystem();
+	AudioEffect->Play();
 
+	if (LinkedMapLoader)
+		LinkedMapLoader->SetIsActivated(true);
 }
 
 void ATankFactory::DamageTaked(float DamageValue)

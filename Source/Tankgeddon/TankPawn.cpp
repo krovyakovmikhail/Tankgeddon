@@ -86,10 +86,13 @@ TArray<FVector> ATankPawn::GetPatrollingPoints()
 	return points;
 }
 
-void ATankPawn::SetPatrollingPoints(TArray<ATargetPoint*> NewPatrollingPoints)
+void ATankPawn::SetPatrollingPoints(const TArray<ATargetPoint*>& NewPatrollingPoints)
 {
 	PatrollingPoints = NewPatrollingPoints;
+
 }
+
+
 
 // Called when the game starts or when spawned
 void ATankPawn::BeginPlay()
