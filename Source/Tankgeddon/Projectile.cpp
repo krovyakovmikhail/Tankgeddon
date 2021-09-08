@@ -38,6 +38,10 @@ void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 
 	AActor* owner = GetOwner();
 	AActor* ownerByOwner = owner != nullptr ? owner->GetOwner() : nullptr;
+	UPrimitiveComponent* mesh = Cast<UPrimitiveComponent>(OtherActor->GetRootComponent());
+	FVector forceVector = OtherActor->GetActorLocation() - GetActorLocation();
+	forceVector.Normalize();
+
 	if (OtherActor != owner && OtherActor != ownerByOwner)
 	{
 		IDamageTaker* damageTakerActor = Cast<IDamageTaker>(OtherActor);
@@ -49,14 +53,32 @@ void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 			damageData.DamageMaker = this;
 
 			damageTakerActor->TakeDamage(damageData);
+
+			// L8 / task 1 / Попробуйте для передачи силы на объект при касании снаряда воспользоваться методами AddForce.
+			// попробуем применять силу на танки и туррели.			
+			if (mesh)
+			{
+				if (mesh->IsSimulatingPhysics())
+				{
+					mesh->AddImpulse(forceVector * PushForce, NAME_None, true);
+				}
+			}
 		}
 		else
 		{
-			OtherActor->Destroy();
+			
+			if (mesh)
+			{
+				if (mesh->IsSimulatingPhysics())
+				{
+				mesh->AddImpulse(forceVector * PushForce, NAME_None, true);
+				}
+			}
 		}
 
 		Destroy();
 	}
+
 
 }
 

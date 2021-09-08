@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
-	void Start();
+	virtual void Start();
 
 
 protected:
@@ -29,6 +29,9 @@ protected:
 		float MoveRate = 0.005f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
 		float Damage = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+		float PushForce = 1000;
+
 
 	FTimerHandle MovementTimerHandle;
 
@@ -37,7 +40,8 @@ protected:
 		void OnMeshOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void Move();
+		virtual void Move();
+
 
 
 };
