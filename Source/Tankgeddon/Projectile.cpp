@@ -23,6 +23,80 @@ AProjectile::AProjectile()
 // Called when the game starts or when spawned
 
 
+void AProjectile::TakeDamageOrAddImpulse(AActor* Actor)
+{
+	IDamageTaker* damageTakerActor = Cast<IDamageTaker>(Actor);
+	if (damageTakerActor)
+	{
+		FDamageData damageData;
+		damageData.DamageValue = Damage;
+		damageData.Instigator = GetOwner();
+		damageData.DamageMaker = this;
+
+		damageTakerActor->TakeDamage(damageData);
+	}
+	else
+	{
+		UPrimitiveComponent* mesh = Cast<UPrimitiveComponent>(Actor->GetRootComponent());
+		if (mesh)
+		{
+			if (mesh->IsSimulatingPhysics())
+			{
+				FVector forceVector = Actor->GetActorLocation() - GetActorLocation();
+				forceVector.Normalize();
+				mesh->AddImpulse(forceVector * PushForce, NAME_None, true);
+			}
+		}
+	}
+}
+
+void AProjectile::Explode(bool bExpl)
+{
+	if (bExpl)
+	{
+		FVector startPos = GetActorLocation();
+		FVector endPos = startPos + FVector(0.1f);
+
+		FCollisionShape Shape = FCollisionShape::MakeSphere(ExplodeRadius);
+		FCollisionQueryParams params = FCollisionQueryParams::DefaultQueryParam;
+		params.AddIgnoredActor(this);
+		params.bTraceComplex = true;
+		params.TraceTag = "Explode Trace";
+		TArray<FHitResult> AttackHit;
+
+		FQuat Rotation = FQuat::Identity;
+
+		bool sweepResult = GetWorld()->SweepMultiByChannel
+		(
+			AttackHit,
+			startPos,
+			endPos,
+			Rotation,
+			ECollisionChannel::ECC_Visibility,
+			Shape,
+			params
+		);
+
+		GetWorld()->DebugDrawTraceTag = "Explode Trace";
+
+		if (sweepResult)
+		{
+			for (FHitResult hitResult : AttackHit)
+			{
+				AActor* otherActor = hitResult.GetActor();
+				if (!otherActor)
+					continue;
+
+				TakeDamageOrAddImpulse(otherActor);
+
+			}
+		}
+	}
+	
+}
+
+
+
 
 void AProjectile::Start()
 {
@@ -54,6 +128,8 @@ void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 
 			damageTakerActor->TakeDamage(damageData);
 
+
+
 			// L8 / task 1 / Попробуйте для передачи силы на объект при касании снаряда воспользоваться методами AddForce.
 			// попробуем применять силу на танки и туррели.			
 			if (mesh)
@@ -76,6 +152,9 @@ void AProjectile::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 			}
 		}
 
+		//Добавьте отрабатывание взрыва не только при касании поверхности, но и при любом столкновении снаряда с объектами.
+		Explode(bExplosion); //Вызываем взрыв в событии OnMeshOverlapBegin. с помощью параметра bExplosion проверяем запускать взрыв или нет. 
+
 		Destroy();
 	}
 
@@ -87,3 +166,4 @@ void AProjectile::Move()
 	FVector nextPosition = GetActorLocation() + GetActorForwardVector() * MoveSpeed * MoveRate;
 	SetActorLocation(nextPosition);
 }
+

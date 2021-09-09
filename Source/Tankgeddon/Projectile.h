@@ -16,6 +16,12 @@ public:
 	AProjectile();
 
 	virtual void Start();
+	virtual void Explode(bool bExpl);
+	virtual void TakeDamageOrAddImpulse(AActor* Actor);  //
+
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Trajectory")
+		bool bExplosion = true;
 
 
 protected:
@@ -31,6 +37,11 @@ protected:
 		float Damage = 1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
 		float PushForce = 1000;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Trajectory")
+		float ExplodeRadius = 450.f;
+
+	// Сделайте включение и выключение доступности такого взрыва у снаряда параметром.
+	// bVolumetricExplosion - , будет отвеать за взыв.
 
 
 	FTimerHandle MovementTimerHandle;
