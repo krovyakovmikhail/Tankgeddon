@@ -15,7 +15,13 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
-	void Start();
+	virtual void Start();
+	virtual void Explode(bool bExpl);
+	virtual void TakeDamageOrAddImpulse(AActor* Actor);  //
+
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Trajectory")
+		bool bExplosion = true;
 
 
 protected:
@@ -29,6 +35,14 @@ protected:
 		float MoveRate = 0.005f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
 		float Damage = 1;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Damage")
+		float PushForce = 100;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Trajectory")
+		float ExplodeRadius = 450.f;
+
+	// Сделайте включение и выключение доступности такого взрыва у снаряда параметром.
+	// bVolumetricExplosion - , будет отвеать за взыв.
+
 
 	FTimerHandle MovementTimerHandle;
 
@@ -37,7 +51,8 @@ protected:
 		void OnMeshOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-		void Move();
+		virtual void Move();
+
 
 
 };

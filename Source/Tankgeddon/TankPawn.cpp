@@ -220,7 +220,10 @@ void ATankPawn::TakeDamage(FDamageData DamageData)
 
 void ATankPawn::Die()
 {
+	bDied = true;
+	
 	Destroy();
+	
 	DestroyEffect->ActivateSystem();
 	AudioEffect->Play();
 }
