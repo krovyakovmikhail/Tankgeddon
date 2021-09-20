@@ -79,6 +79,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret|Cannon")
 		TSubclassOf<ACannon> CannonClass2;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Health/Die")
+		bool bDied = false;
+
 	
 
 
@@ -151,7 +154,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void Die();
 
 	UFUNCTION()
