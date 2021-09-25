@@ -130,6 +130,8 @@ public:
 	UFUNCTION()
 		void ChangeCannon();
 
+//	UFUNCTION(BlueprintNativeEvent, Category = "Damage")
+//   void ProcessingDamage();
 
 	
 

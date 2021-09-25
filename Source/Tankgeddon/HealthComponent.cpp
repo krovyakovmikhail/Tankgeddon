@@ -28,7 +28,8 @@ void UHealthComponent::TakeDamage(FDamageData DamageData)
 	{
 		if (OnDamaged.IsBound())
 			OnDamaged.Broadcast(takedDamageValue);
-	}
+	};
+	
 }
 
 float UHealthComponent::GetHealth() const

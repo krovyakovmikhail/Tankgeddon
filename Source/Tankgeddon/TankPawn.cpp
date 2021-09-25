@@ -16,8 +16,8 @@ class TankAIController;
 class ATargetPoint;
 
 
-DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
-DEFINE_LOG_CATEGORY(TankLog);
+//DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
+//DEFINE_LOG_CATEGORY(TankLog);
 // Sets default values
 
 
@@ -97,7 +97,7 @@ void ATankPawn::SetPatrollingPoints(const TArray<ATargetPoint*>& NewPatrollingPo
 // Called when the game starts or when spawned
 void ATankPawn::BeginPlay()
 {
-
+	
 	Super::BeginPlay();
 	TankController = Cast<ATankPlayerController>(GetController());
 
@@ -214,8 +214,11 @@ void ATankPawn::FireSpecial()
 void ATankPawn::TakeDamage(FDamageData DamageData)
 {
 	HealthComponent->TakeDamage(DamageData);
+
+
 	DamageEffect->ActivateSystem();
 	AudioEffect->Play();
+
 }
 
 void ATankPawn::Die()
@@ -230,7 +233,7 @@ void ATankPawn::Die()
 
 void ATankPawn::DamageTaked(float DamageValue)
 {
-	UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+	//UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
 }
 
 
