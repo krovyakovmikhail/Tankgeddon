@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PhysicsProjectile.h"
 #include "DrawDebugHelpers.h"
 #include "PhysicsComponent_1.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "PhysicsProjectile.h"
 #include <CollisionShape.h>
 #include "DamageTaker.h"
 
