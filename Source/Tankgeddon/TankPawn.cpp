@@ -16,8 +16,8 @@ class TankAIController;
 class ATargetPoint;
 
 
-//DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
-//DEFINE_LOG_CATEGORY(TankLog);
+DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
+DEFINE_LOG_CATEGORY(TankLog);
 // Sets default values
 
 
@@ -215,25 +215,30 @@ void ATankPawn::TakeDamage(FDamageData DamageData)
 {
 	HealthComponent->TakeDamage(DamageData);
 
-
+	MyBPEvent();; //  В этом месте я хотел вызывать Евент 
+	
 	DamageEffect->ActivateSystem();
 	AudioEffect->Play();
 
 }
+/*
+void ATankPawn::ProcessingDamage()
+{
+	UE_LOG(TankLog, Warning, TEXT("Damage received"));
+}
+*/
 
 void ATankPawn::Die()
 {
 	bDied = true;
-	
 	Destroy();
-	
 	DestroyEffect->ActivateSystem();
 	AudioEffect->Play();
 }
 
 void ATankPawn::DamageTaked(float DamageValue)
 {
-	//UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
+	UE_LOG(TankLog, Warning, TEXT("Tank %s taked damage:%f Health:%f"), *GetName(), DamageValue, HealthComponent->GetHealth());
 }
 
 
