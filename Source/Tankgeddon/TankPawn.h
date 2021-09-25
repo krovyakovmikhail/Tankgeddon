@@ -130,7 +130,8 @@ public:
 	UFUNCTION()
 		void ChangeCannon();
 
-
+	UFUNCTION(BlueprintImplementableEvent)
+		void MyBPEvent();    // хотел евент
 	
 
 	UFUNCTION()

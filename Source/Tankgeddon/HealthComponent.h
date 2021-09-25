@@ -38,5 +38,7 @@ public:
 	float GetHealthState() const;
 
 	void AddHealth(float AddiditionalHealthValue);
+
+	
 		
 };

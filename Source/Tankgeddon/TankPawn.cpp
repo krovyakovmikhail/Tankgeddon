@@ -97,7 +97,7 @@ void ATankPawn::SetPatrollingPoints(const TArray<ATargetPoint*>& NewPatrollingPo
 // Called when the game starts or when spawned
 void ATankPawn::BeginPlay()
 {
-
+	
 	Super::BeginPlay();
 	TankController = Cast<ATankPlayerController>(GetController());
 
@@ -214,16 +214,24 @@ void ATankPawn::FireSpecial()
 void ATankPawn::TakeDamage(FDamageData DamageData)
 {
 	HealthComponent->TakeDamage(DamageData);
+
+	MyBPEvent();; //  В этом месте я хотел вызывать Евент 
+	
 	DamageEffect->ActivateSystem();
 	AudioEffect->Play();
+
 }
+/*
+void ATankPawn::ProcessingDamage()
+{
+	UE_LOG(TankLog, Warning, TEXT("Damage received"));
+}
+*/
 
 void ATankPawn::Die()
 {
 	bDied = true;
-	
 	Destroy();
-	
 	DestroyEffect->ActivateSystem();
 	AudioEffect->Play();
 }
