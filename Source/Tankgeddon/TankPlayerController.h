@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/NativeWidgetHost.h"
 #include "GameFramework/PlayerController.h"
 #include "TankPlayerController.generated.h"
 
@@ -16,6 +17,8 @@ class TANKGEDDON_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 protected:
+
+
 	
 	UPROPERTY()
 		FVector MousePos;

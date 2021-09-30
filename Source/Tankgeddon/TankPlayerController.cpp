@@ -3,6 +3,7 @@
 
 #include "TankPlayerController.h"
 #include "TankPawn.h"
+#include "SMiniMap.h"
 #include "DrawDebugHelpers.h"
 
 class ATankPawn;
@@ -42,6 +43,8 @@ void ATankPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	TankPawn = Cast<ATankPawn>(GetPawn());
+
+
 }
 
 void ATankPlayerController::MoveForward(float AxisValue)
