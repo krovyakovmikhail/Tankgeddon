@@ -11,16 +11,24 @@ class ATankPawn;
 ATankPlayerController::ATankPlayerController()
 {
 	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+
 }
 
 void ATankPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
+	if (InputComponent)
+	{
 	InputComponent->BindAxis("MoveForward", this, &ATankPlayerController::MoveForward);
 	InputComponent->BindAxis("RotateRight", this, &ATankPlayerController::RotateRight);
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATankPlayerController::Fire);
 	InputComponent->BindAction("FireSpecial", IE_Pressed, this, &ATankPlayerController::FireSpecial);
 	InputComponent->BindAction("CangeCannon", IE_Pressed, this, &ATankPlayerController::ChangeCannon);
+	InputComponent->BindKey(EKeys::LeftMouseButton, IE_Released,	this, &ATankPlayerController::OnLeftMouseButtonUp);
+	}
+
+	
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -72,3 +80,11 @@ void ATankPlayerController::ChangeCannon()
 {
 	TankPawn->ChangeCannon();
 };
+void ATankPlayerController::OnLeftMouseButtonUp()
+{
+	if (OnMouseButtonUp.IsBound())
+	{
+		OnMouseButtonUp.Broadcast();
+	}
+
+}

@@ -52,6 +52,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	FVector GetMousePos() { return MousePos; };
 
+	FSimpleMulticastDelegate OnMouseButtonUp;
+
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -61,4 +64,7 @@ protected:
 	void Fire();
 	void FireSpecial();
 	void ChangeCannon();
+
+	void OnLeftMouseButtonUp();
+
 };

@@ -78,7 +78,9 @@ protected:
 	void Targeting();
 	void RotateToPlayer();
 	bool IsPlayerInRange();
+	UFUNCTION(BlueprintCallable)
 	bool CanFire();
+	UFUNCTION(BlueprintCallable)
 	void Fire();
 	bool IsPlayerSeen();
 
