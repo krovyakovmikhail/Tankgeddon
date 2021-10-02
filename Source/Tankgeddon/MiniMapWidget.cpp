@@ -11,5 +11,6 @@ void UMiniMapWidget::NativeConstruct()
         if (MiniMap)
         { 
             MiniMap->SetContent(SNew(SMiniMap));
+            
         }
 }

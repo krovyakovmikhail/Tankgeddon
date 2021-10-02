@@ -35,12 +35,7 @@ int32 SMiniMap::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometr
 	border.Add(localSize * FVector2D(1.f, 0.f));
 	border.Add(localSize * FVector2D(0.f, 0.f));
 
-	FSlateDrawElement::MakeLines(
-		OutDrawElements,
-		LayerId,
-		AllottedGeometry.ToPaintGeometry(),
-		border
-	);
+	FSlateDrawElement::MakeLines(OutDrawElements,LayerId,AllottedGeometry.ToPaintGeometry(),border);
 
 	// –исуем преп€тстви€ на карте, поскольку Ѕѕ не поддерживаем вложенные массивы (TArray<TArray<FVector2D>>), а нам нужно задать сразу
 	// много преп€дствий, используем массив FBox2D, который содержит в себе 2 FVector
@@ -57,38 +52,14 @@ int32 SMiniMap::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometr
 		points.Add(obs.Min);
 		points.Add(obs.Max);
 
-		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
-			AllottedGeometry.ToPaintGeometry(),
-			points
-		);
+		FSlateDrawElement::MakeLines(OutDrawElements,LayerId,AllottedGeometry.ToPaintGeometry(),points);
 	}
 
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		LayerId,
-		AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.5f, 0.5f), brush.ImageSize),
-		&brush
-	);
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		LayerId,
-		AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.3f, 0.5f), brush.ImageSize),
-		&brush
-	);
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		LayerId,
-		AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.7f, 0.3f), brush.ImageSize),
-		&brush
-	);
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		LayerId,
-		AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.8f, 0.2f), brush.ImageSize),
-		&brush
-	);
+
+	FSlateDrawElement::MakeBox(OutDrawElements,	LayerId,AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.5f, 0.5f), brush.ImageSize),&brush);
+	FSlateDrawElement::MakeBox(	OutDrawElements,LayerId,AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.3f, 0.5f), brush.ImageSize),&brush);
+	FSlateDrawElement::MakeBox(	OutDrawElements,LayerId,AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.7f, 0.3f), brush.ImageSize),&brush);
+	FSlateDrawElement::MakeBox(	OutDrawElements,LayerId,AllottedGeometry.ToPaintGeometry(localSize * FVector2D(0.8f, 0.2f), brush.ImageSize),&brush);
 
 	return 0;
 }

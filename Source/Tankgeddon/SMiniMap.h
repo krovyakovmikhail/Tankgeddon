@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MiniMapWidgetStyle.h"
 #include "Widgets/SCompoundWidget.h"
 
 /**
@@ -13,6 +14,7 @@ class TANKGEDDON_API SMiniMap : public SCompoundWidget
 public:
 	SLATE_BEGIN_ARGS(SMiniMap) :_PlayerImage()
 	{}
+	
 	SLATE_ARGUMENT(UTexture2D*, PlayerImage)
 	SLATE_END_ARGS()
 
