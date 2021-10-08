@@ -7,6 +7,8 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 
+
+
 // Sets default values
 AAmmoBox::AAmmoBox()
 {
@@ -36,4 +38,6 @@ void AAmmoBox::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 		Destroy();
 	}
 }
+
+
 

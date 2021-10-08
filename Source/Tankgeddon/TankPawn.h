@@ -6,6 +6,8 @@
 #include "CoreMinimal.h"
 #include "DamageTaker.h"
 #include "HealthComponent.h"
+#include "InventoryComponent.h"
+#include "InventoryManagerComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -29,6 +31,13 @@ class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
 
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly)
+	UInventoryComponent * InventoryComponent;
+	UPROPERTY(EditDefaultsOnly)
+	UInventoryManagerComponent * InventoryManagerComponent;
+
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
 		TArray<ATargetPoint*> PatrollingPoints;
@@ -102,7 +111,7 @@ public:
 
 	FVector GetEyesPosition();
 
-	// создаем 2 слота для крепления пушек. 
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 2 пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. 
 	UPROPERTY()
 		ACannon* Cannonslot1;
 	UPROPERTY()
@@ -131,7 +140,7 @@ public:
 		void ChangeCannon();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void MyBPEvent();    // хотел евент
+		void MyBPEvent();    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	
 
 	UFUNCTION()
