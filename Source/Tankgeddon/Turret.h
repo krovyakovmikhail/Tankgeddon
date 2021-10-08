@@ -77,11 +77,13 @@ protected:
 	virtual void Destroyed() override;
 	void Targeting();
 	void RotateToPlayer();
+	UFUNCTION(BlueprintCallable)
 	bool IsPlayerInRange();
 	UFUNCTION(BlueprintCallable)
 	bool CanFire();
 	UFUNCTION(BlueprintCallable)
 	void Fire();
+	UFUNCTION(BlueprintCallable)
 	bool IsPlayerSeen();
 
 public:
