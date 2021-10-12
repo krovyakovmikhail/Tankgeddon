@@ -15,15 +15,18 @@ UCLASS()
 class TANKGEDDON_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	public:
+	
+public:
+
+	FOnItemDrop OnItemDrop;
 
 	virtual void NativeConstruct() override;
 
 	void Init(int32 ItemsNum);
-	bool AddItem(const FInventorySlotInfo& Item, const FInventoryItemInfo& ItemInfo, 
-		int32 SlotPosition = -1);
+	bool AddItem(const FInventorySlotInfo& Item, const FInventoryItemInfo& ItemInfo, int32 SlotPosition = -1);
 
-	protected:
+	
+protected:
 
 	UPROPERTY(meta = (BindWidgetOptional))
 	UUniformGridPanel* ItemCellsGrid;
@@ -39,5 +42,9 @@ class TANKGEDDON_API UInventoryWidget : public UUserWidget
 	UInventoryCellWidget* GoldCell;
 
 	UInventoryCellWidget * CreateCellWidget();
+	
+
+  
+    void OnItemDropped(UInventoryCellWidget * DraggedFrom, UInventoryCellWidget * DroppedTo);
 
 };

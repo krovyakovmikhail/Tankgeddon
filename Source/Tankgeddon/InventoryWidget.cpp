@@ -16,9 +16,12 @@ void UInventoryWidget::Init(int32 ItemsNum)
 		for (int32 i = 0; i < ItemsNum; i++)
 		{
 			UInventoryCellWidget * Widget = CreateCellWidget();
-			Widget->IndexInInventory = i;
-			ItemCellsGrid->AddChildToUniformGrid(Widget, 
-				i / ItemsInPow, i % ItemsInPow);
+			if (Widget)
+			{
+				Widget->IndexInInventory = i;
+				ItemCellsGrid->AddChildToUniformGrid(Widget, i / ItemsInPow, i % ItemsInPow);
+			}
+			
 		}
 	}
 }
@@ -36,13 +39,13 @@ bool UInventoryWidget::AddItem(const FInventorySlotInfo& Item, const FInventoryI
     
 	if (ItemCellsGrid)
 	{
-		UInventoryCellWidget * WidgetToAddItem = nullptr;
-		UInventoryCellWidget ** WidgetToAddItemPtr = 
-			CellWidgets.FindByPredicate([SlotPosition](UInventoryCellWidget * Widget)
+		
+		UInventoryCellWidget ** WidgetToAddItemPtr = CellWidgets.FindByPredicate([SlotPosition](UInventoryCellWidget * Widget)
 			{
 				return Widget && Widget->IndexInInventory == SlotPosition;
 			});
-
+		
+		UInventoryCellWidget * WidgetToAddItem = nullptr;
 		if (WidgetToAddItemPtr)
 		{
 			WidgetToAddItem = *WidgetToAddItemPtr;
@@ -72,10 +75,25 @@ UInventoryCellWidget * UInventoryWidget::CreateCellWidget()
 {
 	if (CellWidgetClass)
 	{
-		UInventoryCellWidget * CellWidget = CreateWidget<UInventoryCellWidget>(this, 
-			CellWidgetClass);
+		UInventoryCellWidget * CellWidget = CreateWidget<UInventoryCellWidget>(this, CellWidgetClass);
+		
+	if (CellWidget)
+	{
 		CellWidgets.Add(CellWidget);
+		CellWidget->OnItemDrop.AddUObject(this, &UInventoryWidget::OnItemDropped);
 		return CellWidget;
 	}
+		
+		
+	}
 	return nullptr;
+
+
+}
+void UInventoryWidget::OnItemDropped(UInventoryCellWidget * DraggedFrom, UInventoryCellWidget * DroppedTo)
+{
+   // if (OnItemDrop.IsBound())
+   // {
+   	 OnItemDrop.Broadcast(DraggedFrom, DroppedTo);
+   // }
 }

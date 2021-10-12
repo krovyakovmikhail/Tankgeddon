@@ -7,6 +7,7 @@
 #include "InventoryItem.h"
 #include "InventoryWidget.h"
 #include "Components/ActorComponent.h"
+#include "Engine/DataTable.h"
 #include "InventoryManagerComponent.generated.h"
 
 
@@ -45,6 +46,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void OnItemDropped(UInventoryCellWidget* DraggedFrom, UInventoryCellWidget* DroppedTo);
 
         
 };
