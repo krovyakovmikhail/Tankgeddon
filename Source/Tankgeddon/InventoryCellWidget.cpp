@@ -12,7 +12,15 @@ bool UInventoryCellWidget::AddItem(const FInventorySlotInfo& Item,
 	{
 		return false;
 	}
-
+	
+	//Lesson 8 ++
+	if (Item.Count <= 0)
+	{
+		Clear();
+		return true;
+	}
+	//Lesson 8 --
+	
 	if (ItemImage)
 	{
 		ItemImage->SetBrushFromTexture(ItemInfo.Icon.Get());
@@ -106,5 +114,6 @@ bool UInventoryCellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 }
 
 /////////////////
+
 
 

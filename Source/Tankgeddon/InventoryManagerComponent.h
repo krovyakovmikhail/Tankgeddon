@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <ThirdParty/CryptoPP/5.6.5/include/argnames.h>
+
 #include "CoreMinimal.h"
 #include "InventoryComponent.h"
 #include "InventoryItem.h"
@@ -19,8 +21,9 @@ class TANKGEDDON_API UInventoryManagerComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UInventoryManagerComponent();
-	void Init(UInventoryComponent * InInventoryComponent);
-        
+
+
+
 	FInventoryItemInfo* GetItemData(FName ItemID);
 
 protected:
@@ -41,6 +44,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int32 MinInventorySize = 20;
 
+	UPROPERTY()
+	UInventoryWidget * EquipInventoryWidget;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInventoryWidget> EquipInventoryWidgetClass;
+
+
 
 public:	
 	// Called every frame
@@ -48,5 +57,13 @@ public:
 
 	void OnItemDropped(UInventoryCellWidget* DraggedFrom, UInventoryCellWidget* DroppedTo);
 
-        
+	void inizialize (FName ItemID) const;
+	//void Init(UInventoryComponent * InInventoryComponent); lesson 7
+	//
+	// ++  lesson 8
+	void InitLocalInventory(UInventoryComponent* InInventoryComponent); 
+
+	void InitEquipment(UInventoryComponent * InInventoryComponent);
+
 };
+	

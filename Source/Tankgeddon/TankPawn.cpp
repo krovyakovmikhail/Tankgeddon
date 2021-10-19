@@ -7,8 +7,11 @@
 #include "TankPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
+#include "InventoryManagerComponent.h"
 #include <Particles/ParticleSystemComponent.h>
 #include <Components/AudioComponent.h>
+
+
 
 class ATankPawn;
 class ACannon;
@@ -67,6 +70,8 @@ ATankPawn::ATankPawn()
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	InventoryManagerComponent = CreateDefaultSubobject<UInventoryManagerComponent>("InventoryManager");
+	EquipmentInventoryComponent = CreateDefaultSubobject<UEquipInventoryComponent>("EquipInventory");
+
 
 }
 
@@ -102,7 +107,10 @@ void ATankPawn::BeginPlay()
 {
 	
 	Super::BeginPlay();
-	InventoryManagerComponent->Init(InventoryComponent);
+	
+	InventoryManagerComponent->InitLocalInventory(InventoryComponent);
+	InventoryManagerComponent->InitEquipment(EquipmentInventoryComponent);
+	
 	
 	TankController = Cast<ATankPlayerController>(GetController());
 
@@ -149,6 +157,14 @@ void ATankPawn::Tick(float DeltaTime)
 		RotateTurretTo(mousePos);
 	}
 
+}
+
+void ATankPawn::EquipItem(EEquipSlot, FName ItemId)
+{
+}
+
+void ATankPawn::UnequipItem(EEquipSlot, FName ItemId)
+{
 };
 	
 	

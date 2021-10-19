@@ -5,13 +5,14 @@
 #include "Cannon.h"
 #include "CoreMinimal.h"
 #include "DamageTaker.h"
+#include "EquipInventoryComponent.h"
 #include "HealthComponent.h"
 #include "InventoryComponent.h"
 #include "InventoryManagerComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Components/AudioComponent.h"
+
 #include "Engine/TargetPoint.h"
 #include "TankPawn.generated.h"
 
@@ -36,6 +37,8 @@ protected:
 	UInventoryComponent * InventoryComponent;
 	UPROPERTY(EditDefaultsOnly)
 	UInventoryManagerComponent * InventoryManagerComponent;
+	UPROPERTY(EditDefaultsOnly)
+	UEquipInventoryComponent * EquipmentInventoryComponent;
 
 
 	
@@ -158,7 +161,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	
-	
+	void EquipItem (EEquipSlot, FName ItemId);
+	void UnequipItem(EEquipSlot, FName ItemId);
 
 protected:
 	// Called when the game starts or when spawned

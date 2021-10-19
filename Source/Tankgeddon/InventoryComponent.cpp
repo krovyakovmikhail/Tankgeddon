@@ -3,6 +3,8 @@
 
 #include "InventoryComponent.h"
 
+#include "EquipInventoryComponent.h"
+
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
@@ -19,6 +21,9 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+
+	
+	
 	// ...
 	
 }
@@ -40,7 +45,7 @@ FInventorySlotInfo * UInventoryComponent::GetItem(int32 SlotIndex)
 
 void UInventoryComponent::SetItem(int32 SlotIndex, const FInventorySlotInfo& Item)
 {
-	ClearItem(SlotIndex);
+	//ClearItem(SlotIndex);
 	Items.Add(SlotIndex, Item);
 }
 
@@ -58,3 +63,14 @@ int32 UInventoryComponent::GetItemsNum()
 {
 	return Items.Num();
 }
+
+int32 UInventoryComponent::GetMaxItemAmount(int32 SlotIndex, const FInventoryItemInfo& Item)
+{
+	FInventorySlotInfo* InfoPtr = Items.Find(SlotIndex);
+	if (InfoPtr && InfoPtr->ID != Item.ID)
+	{
+		return 0;		
+	}
+	return -1;
+}
+

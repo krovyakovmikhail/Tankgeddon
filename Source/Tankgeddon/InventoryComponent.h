@@ -12,8 +12,8 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TANKGEDDON_API UInventoryComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
 
+	
 public:	
 	// Sets default values for this component's properties
 	UInventoryComponent();
@@ -27,12 +27,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	FInventorySlotInfo * GetItem(int32 SlotIndex);
-	void SetItem(int32 SlotIndex, const FInventorySlotInfo& Item);
+	virtual void SetItem(int32 SlotIndex, const FInventorySlotInfo& Item);
 	void ClearItem(int32 SlotIndex);
 	const TMap<int32, FInventorySlotInfo>& GetItems();
 	int32 GetItemsNum();
 
 	protected:
 	UPROPERTY(EditAnywhere)
-	TMap<int32, FInventorySlotInfo> Items; 
+	TMap<int32, FInventorySlotInfo> Items;
+	public:
+	virtual int32 GetMaxItemAmount(int32 SlotIndex, const FInventoryItemInfo& Item);
 };

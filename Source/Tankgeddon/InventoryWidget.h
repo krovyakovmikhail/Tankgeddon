@@ -19,6 +19,8 @@ class TANKGEDDON_API UInventoryWidget : public UUserWidget
 public:
 
 	FOnItemDrop OnItemDrop;
+	UPROPERTY()
+	UInventoryComponent* RepresentInventory;
 
 	virtual void NativeConstruct() override;
 
@@ -36,7 +38,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UInventoryCellWidget> CellWidgetClass;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TArray<UInventoryCellWidget*> CellWidgets;
 	UPROPERTY(meta = (BindWidgetOptional))
 	UInventoryCellWidget* GoldCell;
@@ -46,5 +48,5 @@ protected:
 
   
     void OnItemDropped(UInventoryCellWidget * DraggedFrom, UInventoryCellWidget * DroppedTo);
-
+	void InitCellWidget(UInventoryCellWidget* Widget);
 };

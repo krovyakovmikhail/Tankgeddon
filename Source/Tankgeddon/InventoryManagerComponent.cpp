@@ -2,7 +2,12 @@
 
 
 #include "InventoryManagerComponent.h"
+#include "InventoryCellWidget.h"
+#include "InventoryComponent.h"
 #include "Engine/Engine.h"
+
+DEFINE_LOG_CATEGORY_STATIC(TTESTLOG, All,All)
+
 
 // Sets default values for this component's properties
 UInventoryManagerComponent::UInventoryManagerComponent()
@@ -15,13 +20,11 @@ UInventoryManagerComponent::UInventoryManagerComponent()
 }
 
 
+
 // Called when the game starts
 void UInventoryManagerComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	Super::BeginPlay();	
 }
 
 
@@ -35,16 +38,26 @@ void UInventoryManagerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 void UInventoryManagerComponent::OnItemDropped(UInventoryCellWidget* DraggedFrom, UInventoryCellWidget* DroppedTo)
 {
-	if (DraggedFrom == nullptr || DroppedTo == nullptr || LocalInventoryComponent == nullptr)
+	if (DraggedFrom == nullptr || DroppedTo == nullptr)
 	{
 		return;
 	}
+
+	UInventoryComponent* FromInventory = DraggedFrom->ParentInventoryWidget->RepresentInventory;
+	UInventoryComponent* ToInventory = DroppedTo->ParentInventoryWidget->RepresentInventory;
 	
-	LocalInventoryComponent->SetItem(DraggedFrom->IndexInInventory, DroppedTo->GetItem());
-	LocalInventoryComponent->SetItem(DroppedTo->IndexInInventory, DraggedFrom->GetItem());
+	if (FromInventory == nullptr || ToInventory == nullptr)
+	{
+		return;;
+	}
 
 	FInventorySlotInfo FromSlot = DraggedFrom->GetItem();
 	FInventorySlotInfo ToSlot = DroppedTo->GetItem();
+	
+	if (FromSlot.Count <= 0)
+	{
+		return;
+	}
 
 	FInventoryItemInfo* FromInfo = GetItemData(FromSlot.ID);
 	FInventoryItemInfo* ToInfo = GetItemData(ToSlot.ID);
@@ -53,7 +66,30 @@ void UInventoryManagerComponent::OnItemDropped(UInventoryCellWidget* DraggedFrom
 	{
 		return;
 	}
+	
+	const int32 MaxCount = ToInventory-> GetMaxItemAmount(DroppedTo->IndexInInventory, *FromInfo);
+	if (MaxCount == 0)
+	{
+		return;
+	}
+	/*else if (MaxCount < 0)
+	{
+		//
+	}*/
+	else if (MaxCount > 0)
+	{
 
+		int32 ItemsToAdd = FMath::Min(MaxCount, FromSlot.Count);
+		ToSlot.Count = FromSlot.Count - ItemsToAdd;
+		ToSlot.ID = FromSlot.ID;
+		ToInfo = FromInfo;
+		FromSlot.Count = ItemsToAdd;		
+	}
+	
+	FromInventory->SetItem(DraggedFrom->IndexInInventory, ToSlot);
+	ToInventory->SetItem(DroppedTo->IndexInInventory, FromSlot);
+
+	
 	DraggedFrom->Clear();
 	if (ToInfo)
 	{
@@ -62,41 +98,121 @@ void UInventoryManagerComponent::OnItemDropped(UInventoryCellWidget* DraggedFrom
 
 	DroppedTo->Clear();
 	DroppedTo->AddItem(FromSlot, *FromInfo);
-	\
+	
      
 }
 
-
-FInventoryItemInfo * UInventoryManagerComponent::GetItemData(FName ItemID)
+void UInventoryManagerComponent::inizialize(FName ItemID) const
 {
-    return InventoryItemsData ? InventoryItemsData->FindRow<FInventoryItemInfo>(ItemID, "") : nullptr;
+	FInventoryItemInfo*  ObshyaInfaPredmet = InventoryItemsData->FindRow<FInventoryItemInfo>("Bomb", "");
+
+	if(ObshyaInfaPredmet)
+	{
+		FInventorySlotInfo Predmet;
+		Predmet.ID = ObshyaInfaPredmet->ID;
+		Predmet.Count = 12;
+		if (LocalInventoryComponent)
+		{
+			LocalInventoryComponent->SetItem(0, Predmet);
+		}
+		
+	}
 }
 
-
-void UInventoryManagerComponent::Init(UInventoryComponent * InInventoryComponent)
+void UInventoryManagerComponent::InitLocalInventory(UInventoryComponent* InInventoryComponent)
 {
-
 	if (InInventoryComponent && InventoryItemsData && InventoryWidgetClass)
-
 	{
 		if (InventoryWidget)
 		{
 			InventoryWidget->RemoveFromViewport();
 		}
-
-		
-		
-		InventoryItemsData->ForeachRow();
-	
-	
 		LocalInventoryComponent = InInventoryComponent;
 
 		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+		
+		InventoryWidget->RepresentInventory = LocalInventoryComponent;
 
-		InventoryWidget->AddToViewport();
+		InventoryWidget ->AddToViewport();
 
-		InventoryWidget->Init(FMath::Max(LocalInventoryComponent->GetItemsNum(), MinInventorySize));
+		InventoryWidget ->Init(FMath::Max(LocalInventoryComponent->GetItemsNum(), MinInventorySize));
 
+		InventoryWidget->OnItemDrop.AddUObject(this, &UInventoryManagerComponent::OnItemDropped);
+
+		for (auto& Item : LocalInventoryComponent->GetItems())
+		//for (auto& [Index, Slot] : LocalInventoryComponent->GetItems())
+		{
+			if (FInventoryItemInfo* Data = GetItemData(Item.Value.ID))
+			{
+				Data->Icon.LoadSynchronous();
+				InventoryWidget->AddItem(Item.Value, *Data, Item.Key);
+			}
+		}
+	}
+
+	
+}
+
+void UInventoryManagerComponent::InitEquipment(UInventoryComponent* InInventoryComponent)
+{
+	
+		ensure(EquipInventoryWidgetClass);
+		EquipInventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), EquipInventoryWidgetClass);
+		EquipInventoryWidget->RepresentInventory = InInventoryComponent;
+	
+	
+		EquipInventoryWidget->OnItemDrop.AddUObject(this, &UInventoryManagerComponent::OnItemDropped);		
+		EquipInventoryWidget->AddToViewport();
+}
+
+
+FInventoryItemInfo * UInventoryManagerComponent::GetItemData(FName ItemID)
+{
+	
+	
+	
+    return InventoryItemsData ? InventoryItemsData->FindRow<FInventoryItemInfo>(ItemID, "") : nullptr;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//   lesson 7
+/*void UInventoryManagerComponent::Init(UInventoryComponent * InInventoryComponent)
+{
+
+	if (InInventoryComponent && InventoryItemsData && InventoryWidgetClass)
+
+	{
+		
+		if (InventoryWidget)
+		{
+			InventoryWidget->RemoveFromViewport();
+		}
+
+				
+		LocalInventoryComponent = InInventoryComponent;
+		
+		//inizialize("Bomb");
+	
+		
+		InventoryWidget = CreateWidget<UInventoryWidget>(GetWorld(), InventoryWidgetClass);
+
+		InventoryWidget->AddToViewport();			
+		
+	
+		InventoryWidget->Init(FMath::Max(LocalInventoryComponent->GetItemsNum(), MinInventorySize));		
+
+		
+		
 		InventoryWidget->OnItemDrop.AddUObject(this, &UInventoryManagerComponent::OnItemDropped);
 
 		for (auto& Item : LocalInventoryComponent->GetItems())
@@ -108,6 +224,8 @@ void UInventoryManagerComponent::Init(UInventoryComponent * InInventoryComponent
 				InventoryWidget->AddItem(Item.Value, *Data, Item.Key);
 			}
 		}
+
+	
 	}
 	/*LocalInventoryComponent = InInventoryComponent;
 
@@ -131,6 +249,3 @@ void UInventoryManagerComponent::Init(UInventoryComponent * InInventoryComponent
 			}
 		}
 	}*/
-
-
-}

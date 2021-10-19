@@ -33,7 +33,13 @@ class TANKGEDDON_API UInventoryCellWidget : public UUserWidget
 
 	const FInventorySlotInfo& GetItem() const;
 
+	UPROPERTY(EditAnywhere)
 	int32 IndexInInventory = -1;
+	UPROPERTY()
+	class UInventoryWidget * ParentInventoryWidget;
+	UPROPERTY()
+	class UInventoryComponent * RepresentedInventory;
+
     
 	protected:
   
@@ -58,7 +64,6 @@ protected:
 
 public:
 
-	UPROPERTY()
-		UInventoryWidget* ParentInventoryWidget;
+	
 
 };

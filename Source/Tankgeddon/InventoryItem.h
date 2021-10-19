@@ -6,6 +6,17 @@
 #include "InventoryItem.generated.h"
 
 UENUM()
+enum class EEquipSlot :uint8
+{
+    ES_None,
+    ES_Muzzle,
+    ES_LeftCaterpillar,
+    ES_RightCaterpillar,
+    ES_Turret,
+    ES_Bombs,
+};
+
+UENUM()
 enum class EItemType : uint8
 {
     IT_Miscellaneous,
@@ -33,6 +44,9 @@ public:
     // tech info
     UPROPERTY(EditAnywhere, Category = "General")
     FName ID;
+    
+    UPROPERTY(EditAnywhere, Category = "General")
+    EEquipSlot EquipSlot;
 
     // text info
     UPROPERTY(EditAnywhere, Category = "General")
