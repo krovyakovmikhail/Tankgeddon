@@ -42,6 +42,7 @@ public class MyPlugin : ModuleRules
 				"UnrealEd",
 				"LevelEditor",
 				"UMG"
+
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

@@ -70,7 +70,7 @@ ATankPawn::ATankPawn()
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("Inventory");
 	InventoryManagerComponent = CreateDefaultSubobject<UInventoryManagerComponent>("InventoryManager");
-	EquipmentInventoryComponent = CreateDefaultSubobject<UEquipInventoryComponent>("EquipInventory");
+	//EquipmentInventoryComponent = CreateDefaultSubobject<UEquipInventoryComponent>("EquipInventory");
 
 
 }
@@ -109,7 +109,7 @@ void ATankPawn::BeginPlay()
 	Super::BeginPlay();
 	
 	InventoryManagerComponent->InitLocalInventory(InventoryComponent);
-	InventoryManagerComponent->InitEquipment(EquipmentInventoryComponent);
+	//InventoryManagerComponent->InitEquipment(EquipmentInventoryComponent);
 	
 	
 	TankController = Cast<ATankPlayerController>(GetController());

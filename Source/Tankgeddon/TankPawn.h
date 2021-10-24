@@ -1,14 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "Cannon.h"
 #include "CoreMinimal.h"
 #include "DamageTaker.h"
-#include "EquipInventoryComponent.h"
+//#include "EquipInventoryComponent.h"
 #include "HealthComponent.h"
-#include "InventoryComponent.h"
-#include "InventoryManagerComponent.h"
+#include "MyPlugin/Public/InventoryComponent.h"
+#include "MyPlugin/Public/InventoryManagerComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -37,8 +37,9 @@ protected:
 	UInventoryComponent * InventoryComponent;
 	UPROPERTY(EditDefaultsOnly)
 	UInventoryManagerComponent * InventoryManagerComponent;
-	UPROPERTY(EditDefaultsOnly)
-	UEquipInventoryComponent * EquipmentInventoryComponent;
+	
+	// UPROPERTY(EditDefaultsOnly)
+	// UEquipInventoryComponent * EquipmentInventoryComponent;
 
 
 	
