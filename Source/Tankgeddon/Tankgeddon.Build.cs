@@ -8,7 +8,7 @@ public class Tankgeddon : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "MyPlugin", "MediaAssets" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG", "MyPlugin", "MediaAssets", "DesktopPlatform", "Slate" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
