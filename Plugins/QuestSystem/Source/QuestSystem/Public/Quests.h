@@ -8,8 +8,9 @@
 #include "Quests.generated.h"
 
 class UObjective;
+class AQuests;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestStatusUpdated, AActor* /*Objective*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnQuestStatusUpdated, AQuests* /*Objective*/);
 
 
 UCLASS()
@@ -35,6 +36,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, CallInEditor)
 	void UpdateLocation();
+	
+	UFUNCTION(BlueprintPure)
+	const TArray <UObjective*> GetObjectives();
+	
 
 #if WITH_EDITOR
 	UFUNCTION(BlueprintCallable, CallInEditor)
@@ -50,19 +55,28 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	FText Name;
-	UPROPERTY(EditAnywhere)
-	FText Descrition;
+	
+	UPROPERTY(EditAnywhere)	
+	FText Description;
+	
 	UPROPERTY(EditAnywhere)
 	TArray <UObjective*> Objectives;
+	
 	UPROPERTY(EditAnywhere)
 	bool bIsStoryQuest = true;
+	
 	UPROPERTY(EditAnywhere)
 	bool bKeepObjectivesOrder = true;
+	
 	UPROPERTY(EditAnywhere)
 	AQuests* PreviousQuest;
+	
 	UPROPERTY(VisibleAnywhere)
 	bool bIsTaken;
 	
+	bool IsComplited() const;
+
+	bool IsStoryQuest() const;
 	
 
 	

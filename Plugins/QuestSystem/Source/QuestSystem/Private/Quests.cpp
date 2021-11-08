@@ -17,6 +17,8 @@ AQuests::AQuests()
 void AQuests::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
 	
 }
 
@@ -74,6 +76,11 @@ void AQuests::UpdateLocation()
 	}
 }
 
+const TArray<UObjective*> AQuests::GetObjectives()
+{
+	return Objectives;
+}
+
 #if WITH_EDITOR
 void AQuests::AddLocationObjective()
 {
@@ -86,5 +93,31 @@ void AQuests::AddInteractObjective()
 	Objectives.Add(NewObject<UInteractionObjective>(this));
 
 }
+
+
+
 #endif
 
+
+bool AQuests::IsComplited() const
+{
+	if (bKeepObjectivesOrder && Objectives.IsValidIndex(Objectives.Num()-1))
+		
+	{
+		return  Objectives[Objectives.Num()-1]->bIsCompleted;
+	}
+
+	for (auto * Objective : Objectives)
+	{
+		if (Objective && !Objective->bIsCompleted)
+		{
+			return  false;
+		}		
+	}
+	return  true;
+}
+
+bool AQuests::IsStoryQuest() const
+{
+	return false;
+}
