@@ -78,6 +78,6 @@ public:
 
 	bool IsStoryQuest() const;
 	
-
+	FText GetDescription()const;
 	
 };

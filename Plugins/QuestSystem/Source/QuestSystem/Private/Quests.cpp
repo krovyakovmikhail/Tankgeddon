@@ -121,3 +121,8 @@ bool AQuests::IsStoryQuest() const
 {
 	return false;
 }
+
+FText AQuests::GetDescription() const
+{
+	return Description;
+}
