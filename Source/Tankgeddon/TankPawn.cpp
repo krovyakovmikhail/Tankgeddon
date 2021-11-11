@@ -7,8 +7,11 @@
 #include "TankPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/ArrowComponent.h"
+#include "InventoryManagerComponent.h"
 #include <Particles/ParticleSystemComponent.h>
 #include <Components/AudioComponent.h>
+
+
 
 class ATankPawn;
 class ACannon;
@@ -65,6 +68,11 @@ ATankPawn::ATankPawn()
 	HitCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit collider"));
 	HitCollider->SetupAttachment(BodyMesh);
 
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("Inventory");
+	InventoryManagerComponent = CreateDefaultSubobject<UInventoryManagerComponent>("InventoryManager");
+	//EquipmentInventoryComponent = CreateDefaultSubobject<UEquipInventoryComponent>("EquipInventory");
+
+
 }
 
 FVector ATankPawn::GetTurretForwardVector()
@@ -99,13 +107,18 @@ void ATankPawn::BeginPlay()
 {
 	
 	Super::BeginPlay();
+	
+	InventoryManagerComponent->InitLocalInventory(InventoryComponent);
+	//InventoryManagerComponent->InitEquipment(EquipmentInventoryComponent);
+	
+	
 	TankController = Cast<ATankPlayerController>(GetController());
 
-	//Начало игры - загружаем пушку. 
+	
 	SetupCannon(CannonClass);
 
 
-	//Начало игры - загружаем пушку во второй слот. 	
+	
 	FActorSpawnParameters params;
 	params.Instigator = this;
 	params.Owner = this;
@@ -126,7 +139,7 @@ void ATankPawn::Tick(float DeltaTime)
 	FVector movePosition = currentLocation + forwardVector * MoveSpeed * _targetForwardAxisValue * DeltaTime;
 	SetActorLocation(movePosition, true);
 
-	//Поворот танка
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	CurrentRightAxisValue = FMath::Lerp(CurrentRightAxisValue, TargetRotateAxisValue, InterpolationKey);
 
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentRightAxisValue = %f TargetRightAxisValue = %f"), CurrentRightAxisValue, TargetRotateAxisValue);
@@ -137,18 +150,26 @@ void ATankPawn::Tick(float DeltaTime)
 	FRotator newRotation = FRotator(0, yawRotation, 0);
 	SetActorRotation(newRotation);
 
-	// Поворот турелли.
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 	if (TankController)
 	{
 		FVector mousePos = TankController->GetMousePos();
 		RotateTurretTo(mousePos);
 	}
 
+}
+
+void ATankPawn::EquipItem(EEquipSlot, FName ItemId)
+{
+}
+
+void ATankPawn::UnequipItem(EEquipSlot, FName ItemId)
+{
 };
 	
 	
 
-// поворот туррели танка на игрока
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 void ATankPawn::RotateTurretTo(FVector TargetPosition)
 {
 	FRotator targetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TargetPosition);
@@ -171,7 +192,7 @@ void ATankPawn::RotateRight(float AxisValue)
 //Cannon
 void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
 {
-	if (Cannonslot1) //сбрасывать пушку и крепить из подобранного бокса будем на 1-й слот (второй сохраняется всегда.)
+	if (Cannonslot1) //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 1-пїЅ пїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.)
 	{
 		Cannonslot1->Destroy();
 	}
@@ -185,9 +206,9 @@ void ATankPawn::SetupCannon(TSubclassOf<ACannon> inClassCannon)
 
 }
 
-void ATankPawn::ChangeCannon()  //замена пушки
+void ATankPawn::ChangeCannon()  //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 {
-	ACannon* Cannon; //Время жизни объекта Cannon будет ограничено функцие CancgeCannon/ 
+	ACannon* Cannon; //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Cannon пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ CancgeCannon/ 
 
 	Cannon = Cannonslot1;
 
@@ -215,7 +236,7 @@ void ATankPawn::TakeDamage(FDamageData DamageData)
 {
 	HealthComponent->TakeDamage(DamageData);
 
-	MyBPEvent();; //  В этом месте я хотел вызывать Евент 
+	MyBPEvent();; //  пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 
 	
 	DamageEffect->ActivateSystem();
 	AudioEffect->Play();

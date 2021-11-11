@@ -14,7 +14,8 @@
 				"AIModule",
 				"UMG",
 				"Slate",
-				"SlateCore"
+				"SlateCore",
+				"MediaAssets"
 			]
 		}
 	]

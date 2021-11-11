@@ -162,3 +162,4 @@ void ATankAIController::Initialize()
 		CurrentPatrolPointIndex = 0;
 	}
 }
+

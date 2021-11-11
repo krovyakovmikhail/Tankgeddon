@@ -1,15 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+/// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "Cannon.h"
 #include "CoreMinimal.h"
 #include "DamageTaker.h"
+//#include "EquipInventoryComponent.h"
 #include "HealthComponent.h"
+#include "MyPlugin/Public/InventoryComponent.h"
+#include "MyPlugin/Public/InventoryManagerComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Components/AudioComponent.h"
+
 #include "Engine/TargetPoint.h"
 #include "TankPawn.generated.h"
 
@@ -29,6 +32,16 @@ class TANKGEDDON_API ATankPawn : public APawn, public IDamageTaker
 
 
 protected:
+
+	UPROPERTY(EditDefaultsOnly)
+	UInventoryComponent * InventoryComponent;
+	UPROPERTY(EditDefaultsOnly)
+	UInventoryManagerComponent * InventoryManagerComponent;
+	
+	// UPROPERTY(EditDefaultsOnly)
+	// UEquipInventoryComponent * EquipmentInventoryComponent;
+
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Move params|Patrol points", Meta = (MakeEditWidget = true))
 		TArray<ATargetPoint*> PatrollingPoints;
@@ -102,7 +115,7 @@ public:
 
 	FVector GetEyesPosition();
 
-	// создаем 2 слота для крепления пушек. 
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 2 пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ. 
 	UPROPERTY()
 		ACannon* Cannonslot1;
 	UPROPERTY()
@@ -131,7 +144,7 @@ public:
 		void ChangeCannon();
 
 	UFUNCTION(BlueprintImplementableEvent)
-		void MyBPEvent();    // хотел евент
+		void MyBPEvent();    // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	
 
 	UFUNCTION()
@@ -149,7 +162,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	
-	
+	void EquipItem (EEquipSlot, FName ItemId);
+	void UnequipItem(EEquipSlot, FName ItemId);
 
 protected:
 	// Called when the game starts or when spawned
