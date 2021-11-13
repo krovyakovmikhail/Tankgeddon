@@ -43,6 +43,9 @@ class QUESTSYSTEM_API UObjective : public UObject
 	UPROPERTY(VisibleAnywhere)
 	bool bCanBeCompleted;
 
+	
+
+	
 };
 
 

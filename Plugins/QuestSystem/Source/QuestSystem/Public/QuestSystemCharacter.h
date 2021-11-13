@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractableObject.h"
+#include "Quests.h"
 #include "GameFramework/Character.h"
 #include "QuestSystemCharacter.generated.h"
 
@@ -49,5 +50,5 @@ public:
 	TSubclassOf<UQuestList> QuestListClass;
 
 	
- 
+	TArray<AQuests*>  AttachedQuests()const;
 };

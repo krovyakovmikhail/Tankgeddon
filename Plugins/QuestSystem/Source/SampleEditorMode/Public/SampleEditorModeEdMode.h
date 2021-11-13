@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "EdMode.h"
-#include "QuestSystem/Public/Quests.h"
+#include <QuestSystem/Public/QuestSystemCharacter.h>
+
+
 
 class FSampleEditorModeEdMode : public FEdMode
 {
@@ -29,8 +31,11 @@ public:
 
 protected:
 	TArray<AActor*> SelectedActors;
-	TArray<AQuests*> SelectedQuestsActors;
-
+	TArray<AQuestSystemCharacter*> QuestCharacterCollections; // ��� ����� ������ NPC
+	TArray<AQuests*> Quests;
+	TArray<UObjective*> Objective;
+	TArray<AActor*> ObjectivesActor;
+	
 	void UpdateSelectedActors();
 	
 };

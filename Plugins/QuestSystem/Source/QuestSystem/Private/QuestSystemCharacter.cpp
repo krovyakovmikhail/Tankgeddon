@@ -53,7 +53,9 @@ void AQuestSystemCharacter::Interact_Implementation(AActor* ActorInteractedWithO
 
 	
 	TArray<AActor *> AttachedActors;
+	
 	 GetAttachedActors(AttachedActors);
+
 	
 
 	for (auto & Actor : AttachedActors)
@@ -114,4 +116,27 @@ void AQuestSystemCharacter::ToggleQuestListVisibility()
 		}
 	
 }
+
+TArray<AQuests*>  AQuestSystemCharacter::AttachedQuests() const  // эта функция должна вернуть массив прикрепленных квестов к нашему инстансу квестЧарактер
+{
+	TArray<AQuests*> AttachedQuests; // это будет коллекция Прикрепленных квестов к NPC квестЧарактер
+	TArray<AActor *> AttachedActors;
+	
+	GetAttachedActors(AttachedActors); //получаем прикрепленных акторов
+	
+	for (auto & Actor :AttachedActors) // Перебирем коррекцию 
+	{
+		AQuests * Quest = Cast<AQuests>(Actor); // Приведемся к AQuests
+
+		if (Quest) //если есть Quest, тогда.. 
+		{
+			AttachedQuests.AddUnique(Quest);		 //..Добавляем в коллекцию прикрепленные квесты
+		}
+		
+
+	
+	}
+	return  AttachedQuests; // вернем TArray указателей на  прикрепленные квесты.
+}
+
 

@@ -41,6 +41,7 @@ public class SampleEditorMode : ModuleRules
 				"InputCore",
 				"UnrealEd",
 				"LevelEditor",
+				"QuestSystem",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

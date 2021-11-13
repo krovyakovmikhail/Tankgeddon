@@ -5,6 +5,7 @@
 #include "InteractableObject.h"
 #include "LocationMarker.h"
 
+
 UInteractionObjective::UInteractionObjective()
 {
 	Type = EObjectiveType::Ot_Interact;

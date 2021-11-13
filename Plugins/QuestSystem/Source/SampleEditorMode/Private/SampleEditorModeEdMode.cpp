@@ -6,6 +6,7 @@
 #include "EditorModeManager.h"
 #include "Engine/Selection.h"
 
+
 const FEditorModeID FSampleEditorModeEdMode::EM_SampleEditorModeEdModeId = TEXT("EM_SampleEditorModeEdMode");
 
 FSampleEditorModeEdMode::FSampleEditorModeEdMode()
@@ -50,14 +51,55 @@ bool FSampleEditorModeEdMode::UsesToolkits() const
 }
 
 void FSampleEditorModeEdMode::Render(const FSceneView* View, FViewport* Viewport, FPrimitiveDrawInterface* PDI)
-{
+{	
+	
 	for (AActor* BoundedActor : SelectedActors)
 	{
-		DrawWireBox(
+		if(BoundedActor == Cast<AQuests>(BoundedActor))
+		{
+			DrawWireBox(
 			PDI,
 			BoundedActor->GetComponentsBoundingBox(true),
-			FColor::Yellow,
+			FColor::Blue,
 			1);
+		}
+		else
+		{
+			DrawWireBox(
+			PDI,
+			BoundedActor->GetComponentsBoundingBox(true),
+			FColor::Green,
+			1);
+		}
+		
+		for (AQuestSystemCharacter* NPCAсtor : QuestCharacterCollections)
+		{
+			DrawWireBox(
+			PDI,
+				NPCAсtor->GetComponentsBoundingBox(true),
+				FColor::Red,
+			1);
+			
+			for (AQuests * QuestActor : Quests)
+			{
+				DrawWireBox(
+                			PDI,
+                				QuestActor->GetComponentsBoundingBox(true),
+                				FColor::Blue,
+                			1);
+				
+				for (AActor * ObjectiveActor : ObjectivesActor)
+				{
+					
+					DrawWireBox(
+							PDI,
+								ObjectiveActor->GetComponentsBoundingBox(true),
+								FColor::White,
+							1);
+					
+				}
+			}
+		}
 	}
 
 	FEdMode::Render(View, Viewport, PDI);
@@ -97,16 +139,70 @@ void FSampleEditorModeEdMode::ActorSelectionChangeNotify()
 void FSampleEditorModeEdMode::UpdateSelectedActors()
 {
 	SelectedActors.Empty();
+	QuestCharacterCollections.Empty();
+	Quests.Empty();
+	Objective.Empty();
+	ObjectivesActor.Empty();
+	
 	USelection* Selection = GEditor->GetSelectedActors();
-	for (FSelectionIterator Iter(*Selection); Iter; ++Iter)
-	{
-		AActor * SelectorActor = Cast<AActor>(*Iter);
 
-		
-		if (SelectorActor)
+	
+	for (FSelectionIterator Iter(*Selection); Iter; ++Iter)
+	{	
+		if  (AActor * Actors = Cast<AActor>(*Iter))
 		{
-			SelectedActors.AddUnique(SelectorActor);
+			if (Actors)
+			{
+				SelectedActors.AddUnique(Actors); 
+			}
+			
+				if (AQuestSystemCharacter * NPC = Cast<AQuestSystemCharacter>(Actors))  //Поскольку NPC это класс AQuestSystemCharacter попробуем его скастовать и поместить в коллекцию 
+				{
+					if (NPC)
+					{
+						QuestCharacterCollections.AddUnique(NPC); // тем самым QuestCharacterCollections должна содержать в себе акторовNPC Которые есть на сцене.
+						for (AQuests * BoundQuest : NPC->AttachedQuests())
+						{
+							if (BoundQuest)
+							{
+								Quests.AddUnique(BoundQuest);
+							}
+
+							for (UObjective  *Objec : BoundQuest->GetObjectives())
+							{
+								if (Objec)
+								{
+									if (UInteractionObjective * OjectTarget = Cast <UInteractionObjective>(Objec))
+									{
+										if (OjectTarget)
+										{
+											ObjectivesActor.Add(OjectTarget->Target);
+										}
+										
+									}
+									else if (ULocationObjective * OjectMarker = Cast <ULocationObjective>(Objec))
+									{
+										if (OjectMarker)
+										{
+											ObjectivesActor.Add(OjectMarker->Marker);
+										}
+									}
+										
+									
+								}
+								
+							}
+						}
+						
+					}
+					
+				}
+					
+			
 		}
+		
+		
+		
 		
 	}
 }
