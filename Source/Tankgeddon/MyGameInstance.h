@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+class USaveManager;
 UCLASS()
 class TANKGEDDON_API UMyGameInstance : public UGameInstance
 {
@@ -17,5 +19,11 @@ class TANKGEDDON_API UMyGameInstance : public UGameInstance
 	public:
 
 	void Init() override;
+
+	UFUNCTION(BlueprintCallable, meta=(WorldContext = WorldContextObjet))
+	static USaveManager* GetSaveManager(UObject* WorldContextObjet);
+	
+	protected:
+	USaveManager* SaveManager;
 	
 };
