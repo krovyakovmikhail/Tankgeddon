@@ -70,7 +70,7 @@ protected:
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
-		float MoveSpeed = 100;
+		float MoveSpeed = 300;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
 		float RotationSpeed = 100;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
@@ -116,9 +116,9 @@ public:
 	FVector GetEyesPosition();
 
 	// ������� 2 ����� ��� ��������� �����. 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		ACannon* Cannonslot1;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 		ACannon* Cannonslot2;
 
 	// move and rotation

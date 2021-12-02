@@ -20,7 +20,7 @@ class TANKGEDDON_API UMyGameInstance : public UGameInstance
 
 	void Init() override;
 
-	UFUNCTION(BlueprintCallable, meta=(WorldContext = WorldContextObjet))
+	UFUNCTION(BlueprintPure, meta=(WorldContext = WorldContextObjet))
 	static USaveManager* GetSaveManager(UObject* WorldContextObjet);
 	
 	protected:

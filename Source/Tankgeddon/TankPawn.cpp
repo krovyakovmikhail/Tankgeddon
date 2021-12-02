@@ -134,10 +134,13 @@ void ATankPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	// Tank movement
+	FString Name = this->GetName();
 	FVector currentLocation = GetActorLocation();
 	FVector forwardVector = GetActorForwardVector();
 	FVector movePosition = currentLocation + forwardVector * MoveSpeed * _targetForwardAxisValue * DeltaTime;
 	SetActorLocation(movePosition, true);
+
+	//UE_LOG (TankLog, Warning, TEXT("Name:%s  movePosition %s"), this->GetName(),movePosition)
 
 	//������� �����
 	CurrentRightAxisValue = FMath::Lerp(CurrentRightAxisValue, TargetRotateAxisValue, InterpolationKey);
